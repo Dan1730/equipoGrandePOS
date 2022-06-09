@@ -50,8 +50,7 @@ class DatabaseInitialize {
         int lines = 0;
         String[][] linesOfSpreadsheet = new String[rows][columns];
         
-        // While loop puts data into the linesOfSpreadsheet variable
-        // If columns or rows is bad, errors will be caught
+        // The while loop puts data from the spreadsheet into the linesOfSpreadsheet variable
         while(scanner.hasNext()) {
             lines++;
             if(scanner.hasNext()) {
@@ -64,7 +63,7 @@ class DatabaseInitialize {
         
         String[] SqlCommands = new String[rows];
 
-        // implement CSV data into SqlCommands by line
+        // Format CSV data into SQL commands
         for(int i = 0; i < lines; i++) {
             SqlCommands[i] = "INSERT INTO " + SqlTableName + " VALUES (";
             for(int j = 0; j < columns; j++) {
@@ -90,8 +89,7 @@ class DatabaseInitialize {
             executionStatement.executeUpdate(sqlLine);
         } 
         catch (Exception e) {
-            e.printStackTrace();
-            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.err.println(e.getClass().getName()+": Table Doesn't Exist");
         }
     }
 
@@ -100,8 +98,15 @@ class DatabaseInitialize {
             // Create a table
             Statement executionStatement = databaseConnection.createStatement();
             
+            // Deletes Current Inventory Table
+            try {
+                executionStatement.executeUpdate("DROP TABLE currentinventory;");
+            } 
+            catch (Exception e) {
+                System.err.println(e.getClass().getName()+": Table Doesn't Exist");
+            }
+
             // Create Current Inventory Table
-            executionStatement.executeUpdate("DROP TABLE currentinventory;");
             executionStatement.executeUpdate(
                 "CREATE TABLE currentinventory (" +
                 "  productID INTEGER PRIMARY KEY," +
@@ -110,8 +115,15 @@ class DatabaseInitialize {
                 ");"
             );
 
+            // Deletes Product Table
+            try {
+                executionStatement.executeUpdate("DROP TABLE product;");
+            } 
+            catch (Exception e) {
+                System.err.println(e.getClass().getName()+": Table Doesn't Exist");
+            }
+
             // Create Product Table
-            executionStatement.executeUpdate("DROP TABLE product;");
             executionStatement.executeUpdate(
                 "CREATE TABLE Product (" +
                 "  productID INTEGER PRIMARY KEY," +
@@ -123,8 +135,15 @@ class DatabaseInitialize {
                 ");"
             );
 
+            // Deletes sale history table
+            try {
+                executionStatement.executeUpdate("DROP TABLE salehistory;");
+            } 
+            catch (Exception e) {
+                System.err.println(e.getClass().getName()+": Table Doesn't Exist");
+            }
+
             // Create saleHistory table
-            executionStatement.executeUpdate("DROP TABLE salehistory;");
             executionStatement.executeUpdate(
                 "CREATE TABLE saleHistory (" +
                 "  saleID INTEGER PRIMARY KEY," +
@@ -132,10 +151,104 @@ class DatabaseInitialize {
                 "  revenue FLOAT" +
                 ");"
             );
+
+            // Deletes sale line item table
+            try {
+                executionStatement.executeUpdate("DROP TABLE saleLineItem;");
+            } 
+            catch (Exception e) {
+                System.err.println(e.getClass().getName()+": Table Doesn't Exist");
+            }
+
+            // Create Sale Line Item Table
+            executionStatement.executeUpdate(
+                "CREATE TABLE saleLineItem (" +
+                "  saleID INTEGER PRIMARY KEY," +
+                "  productID INTEGER," +
+                "  quantity FLOAT" +
+                ");"
+            );
+
+            // Deletes vendor history table
+            try {
+                executionStatement.executeUpdate("DROP TABLE vendorHistory;");
+            } 
+            catch (Exception e) {
+                System.err.println(e.getClass().getName()+": Table Doesn't Exist");
+            }
             
+            // Create Vendor History table
+            executionStatement.executeUpdate(
+                "CREATE TABLE vendorHistory (" +
+                "  saleID INTEGER PRIMARY KEY," +
+                "  saleDate DATE," +
+                "  cost FLOAT" +
+                ");"
+            );
+
+            // Deletes vendor line item table
+            try {
+                executionStatement.executeUpdate("DROP TABLE vendorLineItem;");
+            } 
+            catch (Exception e) {
+                System.err.println(e.getClass().getName()+": Table Doesn't Exist");
+            }
+            
+            // Create Vendor Line Item table
+            executionStatement.executeUpdate(
+                "CREATE TABLE vendorLineItem (" +
+                "  saleID INTEGER PRIMARY KEY," +
+                "  productID INTEGER," +
+                "  quantity FLOAT" +
+                ");"
+            );
+            
+            // Deletes user information table
+            try {
+                executionStatement.executeUpdate("DROP TABLE userInformation;");
+            } 
+            catch (Exception e) {
+                System.err.println(e.getClass().getName()+": Table Doesn't Exist");
+            }
+
+            // Create user information table
+            executionStatement.executeUpdate(
+                "CREATE TABLE userInformation (" +
+                "  userID INTEGER PRIMARY KEY," +
+                "  username VARCHAR(255)," +
+                "  password VARCHAR(255)," +
+                "  role VARCHAR(255)" +
+                ");"
+            );
+
+            // Deletes revenue history table
+            try {
+                executionStatement.executeUpdate("DROP TABLE revenueHistory;");
+            } 
+            catch (Exception e) {
+                e.printStackTrace();
+                System.err.println(e.getClass().getName()+": "+e.getMessage());
+            }
+
+            // Creates revenue history table
+            executionStatement.executeUpdate(
+                "CREATE TABLE revenueHistory (" +
+                "  revenueDate DATE," +
+                "  revenue FLOAT," +
+                "  expenses FLOAT," +
+                "  profit FLOAT" +
+                ");"
+            );
+
+            // Shares permissions of new tables with all of the development team
             ShareTable("currentinventory");
             ShareTable("product");
             ShareTable("salehistory");
+            ShareTable("saleLineItem");
+            ShareTable("vendorHistory");
+            ShareTable("vendorLineItem");
+            ShareTable("userInformation");
+            ShareTable("revenueHistory");
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -158,6 +271,57 @@ class DatabaseInitialize {
         }
     }
 
+    // This function contains > 15 SQL commands to run in
+    public static void performQueries(){
+        // User query #1
+        RunSQL("");
+
+        // User query #2
+        RunSQL("");
+
+        // Revenue History query #1
+        RunSQL("");
+
+        // Revenue History query #2
+        RunSQL("");
+
+        // Sales query #1
+        RunSQL("");
+
+        // Sales query #2
+        RunSQL("");
+
+        // Sale Items query #1
+        RunSQL("");
+
+        // Sale Items query #2
+        RunSQL("");
+
+        // Current Inventory query #1
+        RunSQL("");
+
+        // Current Inventory query #2
+        RunSQL("");
+
+        // Vendor Transactions query #1
+        RunSQL("");
+
+        // Vendor Transactions query #2
+        RunSQL("");
+
+        // Vendor Transaction Items query #1
+        RunSQL("");
+
+        // Vendor Transaction Items query #2
+        RunSQL("");
+
+        // Product query #1
+        RunSQL("");
+
+        // Product query #2
+        RunSQL("");
+    }
+
     public static void main(String[] args) {
         // Initialize connection for the database
         DatabaseConnect();
@@ -166,7 +330,7 @@ class DatabaseInitialize {
         CreateTables();
 
         // Process data from csv file and run the associated SQL commands
-        ProcessCSV("currentinventory.csv", "currentinventory", 53, 3);
+        ProcessCSV("InitialDatabase/currentinventory.csv", "currentinventory", 53, 3);
 
         // Verify database for correctness
         
