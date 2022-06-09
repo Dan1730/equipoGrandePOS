@@ -7,11 +7,11 @@ import datetime
 
 # define constants
 # file names
-PRODUCT_DATA_FILE_NAME = 'ProductData.csv'
-SALES_FILE_NAME = 'Sales.csv'
-SALES_LINE_ITEMS_FILE_NAME = 'SaleslineItems.csv'
-VENDOR_TRANSACTIONS_FILE_NAME = 'VendorTransactions.csv'
-VENDOR_TRANSACTIONS_LINE_ITEMS_FILE_NAME = 'VendorTransactionsLineItems.csv'
+PRODUCT_DATA_FILE_NAME = '../InitialDatabase/product.csv'
+SALES_FILE_NAME = '../InitialDatabase/salehistory.csv'
+SALES_LINE_ITEMS_FILE_NAME = '../InitialDatabase/saleslineItem.csv'
+VENDOR_TRANSACTIONS_FILE_NAME = '../InitialDatabase/vendorhistory.csv'
+VENDOR_TRANSACTIONS_LINE_ITEMS_FILE_NAME = '../InitialDatabase/vendorlineitem.csv'
 
 # simulation values
 RESTOCK_QUANTITY = 20
@@ -136,7 +136,7 @@ def createSell(inventory: dict):
             desiredQuantity = int(desiredQuantity)
 
         # add to transaction
-        with open ("SalesLineItems.csv", "a") as salesLineItemsFile:
+        with open (SALES_LINE_ITEMS_FILE_NAME, "a") as salesLineItemsFile:
             salesLineItems = csv.writer(salesLineItemsFile)
             salesLineItems.writerow([customerTxID, desiredProduct.productID, desiredQuantity])
 
