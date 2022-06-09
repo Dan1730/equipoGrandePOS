@@ -7,11 +7,11 @@ import datetime
 
 # define constants
 # file names
-PRODUCT_DATA_FILE_NAME = '../InitialDatabase/product.csv'
-SALES_FILE_NAME = '../InitialDatabase/salehistory.csv'
-SALES_LINE_ITEMS_FILE_NAME = '../InitialDatabase/saleslineItem.csv'
-VENDOR_TRANSACTIONS_FILE_NAME = '../InitialDatabase/vendorhistory.csv'
-VENDOR_TRANSACTIONS_LINE_ITEMS_FILE_NAME = '../InitialDatabase/vendorlineitem.csv'
+PRODUCT_DATA_FILE_NAME = '../DatabaseTool/InitialDatabase/product.csv'
+SALES_FILE_NAME = '../DatabaseTool/InitialDatabase/salehistory.csv'
+SALES_LINE_ITEMS_FILE_NAME = '../DatabaseTool/InitialDatabase/salelineItem.csv'
+VENDOR_TRANSACTIONS_FILE_NAME = '../DatabaseTool/InitialDatabase/vendorhistory.csv'
+VENDOR_TRANSACTIONS_LINE_ITEMS_FILE_NAME = '../DatabaseTool/InitialDatabase/vendorlineitem.csv'
 
 # simulation values
 RESTOCK_QUANTITY = 20
