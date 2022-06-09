@@ -4,6 +4,21 @@ import csv
 import random
 import os
 
+#define constants
+#file names
+PRODUCT_DATA_FILE_NAME = 'ProductData.csv'
+SALES__FILE_NAME = 'Sales.csv'
+SALES_LINE_ITEMS_FILE_NAME = 'SaleslineItems.csv'
+VENDOR_TRANSACTIONS_FILE_NAME = 'VendorTransactions.csv'
+VENDOR_TRANSACTIONS_LINE_ITEMS_FILE_NAME = 'VendorTransactionsLineItems.csv'
+
+#simulation values
+RESTOCK_QUANTITY = 50
+CUSTOMER_BUDGET_MIN = 15.0
+CUSTOMER_BUDGET_MAX = 30.0
+CUSTOMER_ITEM_KG_MIN = 1.0
+CUSTOMER_TIEM_KG_MAX = 8.0
+
 # Enum that stores the different units the shop uses. 
 class Unit(Enum):
     INDIVIDUAL = 0          # sell per package or item
@@ -29,7 +44,7 @@ class Product:
 # correct format
 def readProductCSV() -> list:
     productsList = []
-    with open("ProductData.csv") as csvfile:
+    with open(PRODUCT_DATA_FILE_NAME) as csvfile:
         reader = csv.reader(csvfile)
         reader.__next__() # skip the header in the csv
         for row in reader:
@@ -57,17 +72,16 @@ def buyProduct(inventory: dict, product: Product, day: int):
     global vendorCurrentDay
     global vendorTxID
 
-    inventory[product] += 25
+    inventory[product] += RESTOCK_QUANTITY
     
-    print(vendorCurrentDay, day)
     if vendorCurrentDay != day:
         vendorCurrentDay = day
         vendorTxID += 1
 
     # add transacation to CSV
-    with open("VendorTransactionsLineItems.csv", "a") as vendorTransactionLineItemsFile:
+    with open(VENDOR_TRANSACTIONS_LINE_ITEMS_FILE_NAME, "a") as vendorTransactionLineItemsFile:
         vendorTransactionLineItems = csv.writer(vendorTransactionLineItemsFile)
-        vendorTransactionLineItems.writerow([vendorTxID, product.productID, 25])
+        vendorTransactionLineItems.writerow([vendorTxID, product.productID, 50])
 
 # restock if inentory is too low
 def restock(inventory: dict, day: int):
@@ -82,15 +96,27 @@ def createSell(inventory: dict):
     # so the function can access these variables
     global customerTxID
 
-    customerBudget = random.uniform(15.0, 30.0) #decide a budget for the customer
+    endTransaction = False
+
+    customerBudget = random.uniform(CUSTOMER_BUDGET_MIN, CUSTOMER_BUDGET_MAX) #decide a budget for the customer
     while customerBudget > 0.0:
         # choose a product
-        # if product is unavailiable, choose a different product
+        # if product is unavailiable, choose a different product, but if no products are availible,
+        # end transaction
+        productsChecked = 1
         desiredProduct = random.choice(list(inventory.keys()))
-        while(inventory[desiredProduct] <= 0):
+        while(inventory[desiredProduct] <= 1.0):
             desiredProduct = random.choice(list(inventory.keys()))
+            productsChecked += 1
+            if productsChecked == len(inventory):
+                endTransaction = True
+                break
+
+        if endTransaction:
+            break
+
         # choose a quantity
-        desiredQuantity = random.uniform(1.0, max(7.0, inventory[desiredProduct]))
+        desiredQuantity = random.uniform(CUSTOMER_ITEM_KG_MIN, max(CUSTOMER_TIEM_KG_MAX, inventory[desiredProduct]))
         # add to transaction
         with open ("SalesLineItems.csv", "a") as salesLineItemsFile:
             salesLineItems = csv.writer(salesLineItemsFile)
@@ -108,7 +134,12 @@ def simulateDay(inventory: dict, day: int, multiplier: float):
 
 def main():
 
-    # TODO: remove old csv files first
+    # remove old csv files first
+    if os.path.exists(SALES_LINE_ITEMS_FILE_NAME):
+        os.remove(SALES_LINE_ITEMS_FILE_NAME)
+
+    if os.path.exists(VENDOR_TRANSACTIONS_LINE_ITEMS_FILE_NAME):
+        os.remove(VENDOR_TRANSACTIONS_LINE_ITEMS_FILE_NAME)
 
     #Read CSV of price data of items
     productsList = readProductCSV()
