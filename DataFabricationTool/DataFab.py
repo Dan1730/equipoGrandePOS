@@ -3,21 +3,34 @@ from enum import Enum
 import csv
 import random
 import os
+import datetime
 
-#define constants
-#file names
+# define constants
+# file names
 PRODUCT_DATA_FILE_NAME = 'ProductData.csv'
-SALES__FILE_NAME = 'Sales.csv'
+SALES_FILE_NAME = 'Sales.csv'
 SALES_LINE_ITEMS_FILE_NAME = 'SaleslineItems.csv'
 VENDOR_TRANSACTIONS_FILE_NAME = 'VendorTransactions.csv'
 VENDOR_TRANSACTIONS_LINE_ITEMS_FILE_NAME = 'VendorTransactionsLineItems.csv'
 
-#simulation values
-RESTOCK_QUANTITY = 50
-CUSTOMER_BUDGET_MIN = 15.0
-CUSTOMER_BUDGET_MAX = 30.0
+# simulation values
+RESTOCK_QUANTITY = 20
+CUSTOMER_BUDGET_MIN = 8.0
+CUSTOMER_BUDGET_MAX = 12.0
 CUSTOMER_ITEM_KG_MIN = 1.0
-CUSTOMER_TIEM_KG_MAX = 8.0
+CUSTOMER_TIEM_KG_MAX = 7.0
+
+# The simulation is based on three weeks of data and each day is just incremented by one.
+# This function converts the number to the correct date, and makes the simulation start 3 Sundays
+# before today. 
+def DayNumberToDate(num: int) -> str:
+    currentDateIRL = datetime.datetime.today()
+    weekday = (currentDateIRL.weekday() + 1) % 7 # make it where Sunday is day 0
+    startDate = currentDateIRL - datetime.timedelta(days=(weekday + 14))
+
+    dateToReturn = startDate + datetime.timedelta(days=num)
+
+    return dateToReturn.isoformat()[0:10] # get iso format and substring the date
 
 # Enum that stores the different units the shop uses. 
 class Unit(Enum):
@@ -116,7 +129,7 @@ def createSell(inventory: dict):
             break
 
         # choose a quantity
-        desiredQuantity = random.uniform(CUSTOMER_ITEM_KG_MIN, max(CUSTOMER_TIEM_KG_MAX, inventory[desiredProduct]))
+        desiredQuantity = random.uniform(CUSTOMER_ITEM_KG_MIN, min(CUSTOMER_TIEM_KG_MAX, inventory[desiredProduct]))
         # add to transaction
         with open ("SalesLineItems.csv", "a") as salesLineItemsFile:
             salesLineItems = csv.writer(salesLineItemsFile)
@@ -135,6 +148,12 @@ def simulateDay(inventory: dict, day: int, multiplier: float):
 def main():
 
     # remove old csv files first
+    if os.path.exists(SALES_FILE_NAME):
+        os.remove(SALES_FILE_NAME)
+
+    if os.path.exists(VENDOR_TRANSACTIONS_FILE_NAME):
+        os.remove(VENDOR_TRANSACTIONS_FILE_NAME)
+
     if os.path.exists(SALES_LINE_ITEMS_FILE_NAME):
         os.remove(SALES_LINE_ITEMS_FILE_NAME)
 
@@ -148,11 +167,15 @@ def main():
     #Create fake customer transactions for 3 weeks
     #Chose two days to be holidays and modify history accordingly, accounting for changes in purchase trends
 
+    lastCustomerTxIDEachDay = {}
+    lastVendorTxIDEachDay = {}
+
     inventory = dict.fromkeys(productsList, 0)
     for i in range(21):
         multiplier = 1.0 # used for days preceding holidays to increase sales
         if i % 7 == 0: #Sunday
             restock(inventory, i) #restock on sundays. Don't sell
+            lastVendorTxIDEachDay[i] = vendorTxID
             continue
         if i == 8 or i == 15: #holidays (last two mondays). Do not do anything
             continue
@@ -160,8 +183,61 @@ def main():
             multiplier = 2.0
         if i % 7 == 3: #Wednesday
             restock(inventory, i) # restock on wednesday
+            lastVendorTxIDEachDay[i] = vendorTxID
 
         simulateDay(inventory, i, multiplier)
+        lastCustomerTxIDEachDay[i] = customerTxID
+
+    print(lastVendorTxIDEachDay)
+    # use the itemized csv files that have just been created to create the overall Sales and Vendor
+    # transaction csvs
+    with open(SALES_FILE_NAME, "w") as salesFile, open(SALES_LINE_ITEMS_FILE_NAME) as salesLineItemsFile:
+        sales = csv.writer(salesFile)
+        salesLines = csv.reader(salesLineItemsFile)
+
+        validDaysIter = iter(lastCustomerTxIDEachDay.keys())
+        currDay = next(validDaysIter)
+        lastCustTxIdToday = lastCustomerTxIDEachDay[currDay]
+
+        txIDTotals = {}
+
+        for row in salesLines:
+            if(int(row[0]) > lastCustTxIdToday):
+                currDay = next(validDaysIter)
+                lastCustTxIdToday = lastCustomerTxIDEachDay[currDay]
+
+            if not int(row[0]) in txIDTotals:
+                txIDTotals[int(row[0])] = [next(product for product in productsList if product.productID == int(row[1])).sellPrice * float(row[2]), currDay]
+            else:
+                txIDTotals[int(row[0])][0] += next(product for product in productsList if product.productID == int(row[1])).sellPrice * float(row[2])
+
+
+        for txID in txIDTotals:
+            sales.writerow([txID, DayNumberToDate(txIDTotals[txID][1]), txIDTotals[txID][0]])
+        
+    with open(VENDOR_TRANSACTIONS_FILE_NAME, "w") as vendorTransFile, open(VENDOR_TRANSACTIONS_LINE_ITEMS_FILE_NAME) as vendorTransItemsFile:
+        vendorTrans = csv.writer(vendorTransFile)
+        vendorTransLines = csv.reader(vendorTransItemsFile)
+
+        validDaysIter = iter(lastVendorTxIDEachDay.keys())
+        currDay = next(validDaysIter)
+        lastVendorTxIdToday = lastVendorTxIDEachDay[currDay]
+
+        txIDTotals = {}
+
+        for row in vendorTransLines:
+            if(int(row[0]) > lastVendorTxIdToday):
+                currDay = next(validDaysIter)
+                lastVendorTxIdToday = lastVendorTxIDEachDay[currDay]
+
+            if not int(row[0]) in txIDTotals:
+                txIDTotals[int(row[0])] = [next(product for product in productsList if product.productID == int(row[1])).sellPrice * float(row[2]), currDay]
+            else:
+                txIDTotals[int(row[0])][0] += next(product for product in productsList if product.productID == int(row[1])).sellPrice * float(row[2])
+
+
+        for txID in txIDTotals:
+            vendorTrans.writerow([txID, DayNumberToDate(txIDTotals[txID][1]), txIDTotals[txID][0]])
 
 
 if __name__ == "__main__":
