@@ -1,19 +1,18 @@
 import java.util.*;
+
 import java.sql.*;
 import java.io.*;  
 
 class DatabaseInitialize {
     static Connection databaseConnection = null;
 
-    // DatabaseConnect():
-    // -----------------------------------------------------
-    // Establishes a connection between java and AWS
-    // Precondition: AWS Server and Credentials are correct
-    // Postcondition: A connection is established */
+    /*
+      Establishes a connection between java and AWS with the given
+    */
     public static void DatabaseConnect() {
         // Initialize Credentials
-        String username = "csce315950_4user";
-        String password = "4team4";
+        String username = DatabaseUserInfo.username;
+        String password = DatabaseUserInfo.password;
 
         // Intitialize database information for connection
         String databaseName = "csce315950_4db";
@@ -32,10 +31,9 @@ class DatabaseInitialize {
         System.out.println("Opened database successfully");
     }
 
-    /* Takes data from the CSV and formats it into SQL code
-     - Returns a list of strings
-     - Parameter fileName must be a location of the spreadsheet in the local database */
-    public static void ProcessCSV(String fileName, String SqlTableName, int rows, int columns) {
+    /* Takes data from the CSV and uploads it to the database in a table format
+     - Parameter fileName must be a location of the spreadsheet in the local computer */
+    public static void ProcessCSV(String fileName, String sqlTableName, int rows, int columns) {
         // Setting up scanner and opening file
         Scanner scanner;
         try {
@@ -43,8 +41,7 @@ class DatabaseInitialize {
         }
         catch(Exception e) {
             e.printStackTrace();
-            System.err.println(e.getClass().getName()+": "+e.getMessage());
-            System.exit(0);
+            System.err.println(e.getClass().getName()+": CSV File could not be opened");
             return;
         }
         int lines = 0;
@@ -53,35 +50,38 @@ class DatabaseInitialize {
         // The while loop puts data from the spreadsheet into the linesOfSpreadsheet variable
         while(scanner.hasNext()) {
             lines++;
-            if(scanner.hasNext()) {
-                linesOfSpreadsheet[lines-1] = scanner.next().split(",");
-            }
+            linesOfSpreadsheet[lines-1] = scanner.nextLine().split(",");
         }
         
         // Assertion that the correct amount of data was in the file
-        assert lines == rows : "Rows or columns inputted incorrectly";
+        // ****************** Review these assertions por favor ***********************************
+        assert lines == rows : "Rows inputted incorrectly";
+        assert linesOfSpreadsheet[0].length == columns : "Columns inputted incorrectly";
+        assert linesOfSpreadsheet[lines-1].length == columns : "Data is missing";
         
-        String[] SqlCommands = new String[rows];
+        String[] sqlCommands = new String[rows];
 
         // Format CSV data into SQL commands
         for(int i = 0; i < lines; i++) {
-            SqlCommands[i] = "INSERT INTO " + SqlTableName + " VALUES (";
+            sqlCommands[i] = "INSERT INTO " + sqlTableName + " VALUES (";
             for(int j = 0; j < columns; j++) {
                 if(j != 0) {
-                    SqlCommands[i] += ", ";
+                    sqlCommands[i] += ", ";
                 }
-                SqlCommands[i] += "'" + linesOfSpreadsheet[i][j] + "'";
+                sqlCommands[i] += "'" + linesOfSpreadsheet[i][j] + "'";
             }
-            SqlCommands[i] += (");");
+            sqlCommands[i] += (");");
         }
 
         // Run the SqlCommands to produce the database
         for(int i = 0; i < lines; i++) {
-            RunSQL(SqlCommands[i]);
+            RunSQL(sqlCommands[i]);
         }
     }
 
-    //
+    /*
+        Runs any SQL statement that doesn't provide a result
+    */
     public static void RunSQL(String sqlLine) {
         try {
             // Creates a statement and e
@@ -89,131 +89,139 @@ class DatabaseInitialize {
             executionStatement.executeUpdate(sqlLine);
         } 
         catch (Exception e) {
-            System.err.println(e.getClass().getName()+": Table Doesn't Exist");
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
         }
     }
 
+    /*
+        Returns a string representation of the item located in given column of the first row in the result of the given query
+    */
+    public static String RunSelect(String sqlLine, String columnName) {
+        try {
+            // Creates a statement and executres a quert returns a result set
+            Statement executionStatement = databaseConnection.createStatement();
+            ResultSet queryResult = executionStatement.executeQuery(sqlLine);
+
+            if (queryResult.next()) {
+                return queryResult.getString(columnName);
+            }
+        } 
+        catch (Exception e) {
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+        }
+        return "Query Error: no result";
+    }
+
+    /*
+        Returns the number of rows in a given table
+    */
+    public static int RowCount(String tableName) {
+        // Attempts to count the rows in the given table
+        try {
+            // Creates a statement and executres a quert returns a result set
+            Statement executionStatement = databaseConnection.createStatement();
+            ResultSet queryResult = executionStatement.executeQuery("SELECT COUNT(*) AS rowCount FROM " + tableName + ";");
+
+            if (queryResult.next()) {
+                return queryResult.getInt("rowCount");
+            }
+        } 
+        catch (Exception e) {
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+        }
+        return 0;
+    }
+
+    /*
+        Deletes the table if it already exists
+    */
+    public static void DropTable(String tableName){
+        try {
+            Statement executionStatement = databaseConnection.createStatement();
+            executionStatement.executeUpdate("DROP TABLE " + tableName + ";");
+        } 
+        catch (Exception e) {
+            System.err.println(e.getClass().getName()+": Attempting to replace a table that doesn't exist");
+        }
+    }
+
+    /* 
+    Replace an existing table in the database with a new table using SQL code 
+    */
+    public static void ReplaceTable(String tableName, String sqlCode) {
+        // Deletes the table if it already exists
+        DropTable(tableName);
+        
+        // Create New Table
+        try {
+            Statement executionStatement = databaseConnection.createStatement();
+            executionStatement.executeUpdate(sqlCode);
+        } 
+        catch (Exception e) {
+            System.err.println(e.getClass().getName()+": Failure to replace table");
+        }
+    }
+
+    /* 
+    Creates the default tables in our SQL database 
+    */
     public static void CreateTables() {
         try {
-            // Create a table
             Statement executionStatement = databaseConnection.createStatement();
-            
-            // Deletes Current Inventory Table
-            try {
-                executionStatement.executeUpdate("DROP TABLE currentinventory;");
-            } 
-            catch (Exception e) {
-                System.err.println(e.getClass().getName()+": Table Doesn't Exist");
-            }
 
-            // Create Current Inventory Table
-            executionStatement.executeUpdate(
-                "CREATE TABLE currentinventory (" +
+            ReplaceTable("currentinventory",
+                "  CREATE TABLE currentinventory (" +
                 "  productID INTEGER PRIMARY KEY," +
                 "  stockQuantity FLOAT," +
                 "  restockQuantity FLOAT" +
                 ");"
             );
-
-            // Deletes Product Table
-            try {
-                executionStatement.executeUpdate("DROP TABLE product;");
-            } 
-            catch (Exception e) {
-                System.err.println(e.getClass().getName()+": Table Doesn't Exist");
-            }
-
-            // Create Product Table
-            executionStatement.executeUpdate(
-                "CREATE TABLE Product (" +
+            
+            ReplaceTable("product",
+                "  CREATE TABLE Product (" +
                 "  productID INTEGER PRIMARY KEY," +
                 "  productName VARCHAR(255)," +
-                "  sellUnit INTEGER," +
                 "  sellPrice FLOAT," +
-                "  purchaseUnit INTEGER," +
-                "  purchasePrice FLOAT" +
+                "  sellUnit INTEGER," +
+                "  purchasePrice FLOAT," +
+                "  purchaseUnit INTEGER" +
                 ");"
             );
 
-            // Deletes sale history table
-            try {
-                executionStatement.executeUpdate("DROP TABLE salehistory;");
-            } 
-            catch (Exception e) {
-                System.err.println(e.getClass().getName()+": Table Doesn't Exist");
-            }
-
-            // Create saleHistory table
-            executionStatement.executeUpdate(
-                "CREATE TABLE saleHistory (" +
+            ReplaceTable("saleHistory",
+                "  CREATE TABLE saleHistory (" +
                 "  saleID INTEGER PRIMARY KEY," +
                 "  saleDate DATE," +
                 "  revenue FLOAT" +
                 ");"
             );
-
-            // Deletes sale line item table
-            try {
-                executionStatement.executeUpdate("DROP TABLE saleLineItem;");
-            } 
-            catch (Exception e) {
-                System.err.println(e.getClass().getName()+": Table Doesn't Exist");
-            }
-
-            // Create Sale Line Item Table
-            executionStatement.executeUpdate(
-                "CREATE TABLE saleLineItem (" +
+            
+            ReplaceTable("saleLineItem",
+                "  CREATE TABLE saleLineItem (" +
                 "  saleID INTEGER PRIMARY KEY," +
                 "  productID INTEGER," +
                 "  quantity FLOAT" +
                 ");"
             );
 
-            // Deletes vendor history table
-            try {
-                executionStatement.executeUpdate("DROP TABLE vendorHistory;");
-            } 
-            catch (Exception e) {
-                System.err.println(e.getClass().getName()+": Table Doesn't Exist");
-            }
-            
-            // Create Vendor History table
-            executionStatement.executeUpdate(
-                "CREATE TABLE vendorHistory (" +
+            ReplaceTable("vendorHistory",
+                "  CREATE TABLE vendorHistory (" +
                 "  saleID INTEGER PRIMARY KEY," +
                 "  saleDate DATE," +
                 "  cost FLOAT" +
                 ");"
             );
 
-            // Deletes vendor line item table
-            try {
-                executionStatement.executeUpdate("DROP TABLE vendorLineItem;");
-            } 
-            catch (Exception e) {
-                System.err.println(e.getClass().getName()+": Table Doesn't Exist");
-            }
-            
-            // Create Vendor Line Item table
-            executionStatement.executeUpdate(
-                "CREATE TABLE vendorLineItem (" +
+            ReplaceTable("vendorLineItem",
+                "  CREATE TABLE vendorLineItem (" +
                 "  saleID INTEGER PRIMARY KEY," +
                 "  productID INTEGER," +
                 "  quantity FLOAT" +
                 ");"
             );
             
-            // Deletes user information table
-            try {
-                executionStatement.executeUpdate("DROP TABLE userInformation;");
-            } 
-            catch (Exception e) {
-                System.err.println(e.getClass().getName()+": Table Doesn't Exist");
-            }
-
-            // Create user information table
-            executionStatement.executeUpdate(
-                "CREATE TABLE userInformation (" +
+            ReplaceTable("userInformation",
+                "  CREATE TABLE userInformation (" +
                 "  userID INTEGER PRIMARY KEY," +
                 "  username VARCHAR(255)," +
                 "  password VARCHAR(255)," +
@@ -221,18 +229,8 @@ class DatabaseInitialize {
                 ");"
             );
 
-            // Deletes revenue history table
-            try {
-                executionStatement.executeUpdate("DROP TABLE revenueHistory;");
-            } 
-            catch (Exception e) {
-                e.printStackTrace();
-                System.err.println(e.getClass().getName()+": "+e.getMessage());
-            }
-
-            // Creates revenue history table
-            executionStatement.executeUpdate(
-                "CREATE TABLE revenueHistory (" +
+            ReplaceTable("revenueHistory",
+                "  CREATE TABLE revenueHistory (" +
                 "  revenueDate DATE," +
                 "  revenue FLOAT," +
                 "  expenses FLOAT," +
@@ -256,6 +254,9 @@ class DatabaseInitialize {
         }
     }
 
+    /* 
+        Shares permissions of a table with all of the development team 
+    */
     public static void ShareTable(String tableName){
         try {
             Statement executionStatement = databaseConnection.createStatement();
@@ -271,55 +272,66 @@ class DatabaseInitialize {
         }
     }
 
-    // This function contains > 15 SQL commands to run in
-    public static void performQueries(){
+    /* 
+        This function contains SQL commands to ensure that the database was set up correctly 
+    */
+    public static void PerformQueries(){
         // User query #1
-        RunSQL("");
+        assert RunSelect("SELECT * FROM userinformation WHERE userID = 10;", "username") == "javier" : "Query U1 failed";
 
         // User query #2
-        RunSQL("");
+        assert RunSelect("SELECT * FROM userinformation WHERE username = 'hugo';","userID") == "6" : "Query U2 failed";
+
+        // User query #3
+        assert RowCount("userinformation") == 10 : "Query U3 failed";
 
         // Revenue History query #1
-        RunSQL("");
+        // RunQuery("");
 
         // Revenue History query #2
-        RunSQL("");
+        // RunQuery("");
 
         // Sales query #1
-        RunSQL("");
+        // RunQuery("");
 
         // Sales query #2
-        RunSQL("");
+        // RunQuery("");
 
         // Sale Items query #1
-        RunSQL("");
+        // RunQuery("");
 
         // Sale Items query #2
-        RunSQL("");
+        // RunQuery("");
 
         // Current Inventory query #1
-        RunSQL("");
+        assert RunSelect("SELECT * FROM currentinventory WHERE productID = 53;","stockQuantity") == "91" : "Query C1 failed";
 
         // Current Inventory query #2
-        RunSQL("");
+        assert RunSelect("SELECT * FROM currentinventory WHERE productID = 10","restockQuantity") == "142" : "Query C2 failed";
+
+        // Current Inventory query #3
+        assert RowCount("currentinventory") == 53 : "Query C3 failed";
 
         // Vendor Transactions query #1
-        RunSQL("");
+        // RunQuery("");
 
         // Vendor Transactions query #2
-        RunSQL("");
+        // RunQuery("");
 
         // Vendor Transaction Items query #1
-        RunSQL("");
+        // RunQuery("");
 
         // Vendor Transaction Items query #2
-        RunSQL("");
+        // RunQuery("");
 
         // Product query #1
-        RunSQL("");
+        assert RunSelect("SELECT * FROM product WHERE productID = 53","productName") == "Yucca" : "Query P1 failed";
 
         // Product query #2
-        RunSQL("");
+        assert RunSelect("SELECT * FROM product WHERE productID =15","sellPrice") == "2.15" : "Query P2 failed";
+        
+        // Product query #3
+        assert RowCount("product") == 53 : "Query P3 failed";
     }
 
     public static void main(String[] args) {
@@ -331,9 +343,12 @@ class DatabaseInitialize {
 
         // Process data from csv file and run the associated SQL commands
         ProcessCSV("InitialDatabase/currentinventory.csv", "currentinventory", 53, 3);
+        ProcessCSV("InitialDatabase/product.csv", "product", 53, 6);
+        ProcessCSV("InitialDatabase/userinformation.csv", "userinformation", 10, 4);
 
         // Verify database for correctness
-        
+        PerformQueries();
+
         // Close the connection for the database
         try {
             databaseConnection.close();
