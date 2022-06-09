@@ -130,6 +130,11 @@ def createSell(inventory: dict):
 
         # choose a quantity
         desiredQuantity = random.uniform(CUSTOMER_ITEM_KG_MIN, min(CUSTOMER_TIEM_KG_MAX, inventory[desiredProduct]))
+
+        #if product is an individually sold item, just truncate the float to an int
+        if desiredProduct.sellUnit == Unit.INDIVIDUAL:
+            desiredQuantity = int(desiredQuantity)
+
         # add to transaction
         with open ("SalesLineItems.csv", "a") as salesLineItemsFile:
             salesLineItems = csv.writer(salesLineItemsFile)
@@ -188,9 +193,7 @@ def main():
         simulateDay(inventory, i, multiplier)
         lastCustomerTxIDEachDay[i] = customerTxID
 
-    print(lastVendorTxIDEachDay)
-    # use the itemized csv files that have just been created to create the overall Sales and Vendor
-    # transaction csvs
+    # use the itemized csv files that have just been created to create the overall Sales csv
     with open(SALES_FILE_NAME, "w") as salesFile, open(SALES_LINE_ITEMS_FILE_NAME) as salesLineItemsFile:
         sales = csv.writer(salesFile)
         salesLines = csv.reader(salesLineItemsFile)
@@ -202,19 +205,24 @@ def main():
         txIDTotals = {}
 
         for row in salesLines:
-            if(int(row[0]) > lastCustTxIdToday):
+            txID = int(row[0])
+            productID = int(row[1])
+            quantity = float(row[2])
+
+            if(int(txID) > lastCustTxIdToday):
                 currDay = next(validDaysIter)
                 lastCustTxIdToday = lastCustomerTxIDEachDay[currDay]
 
-            if not int(row[0]) in txIDTotals:
-                txIDTotals[int(row[0])] = [next(product for product in productsList if product.productID == int(row[1])).sellPrice * float(row[2]), currDay]
+            if not txID in txIDTotals:
+                txIDTotals[txID] = [next(product for product in productsList if product.productID == productID).sellPrice * quantity, currDay]
             else:
-                txIDTotals[int(row[0])][0] += next(product for product in productsList if product.productID == int(row[1])).sellPrice * float(row[2])
+                txIDTotals[txID][0] += next(product for product in productsList if product.productID == productID).sellPrice * quantity
 
 
         for txID in txIDTotals:
             sales.writerow([txID, DayNumberToDate(txIDTotals[txID][1]), txIDTotals[txID][0]])
         
+    # exact same logic as above for the vendor transactions csv
     with open(VENDOR_TRANSACTIONS_FILE_NAME, "w") as vendorTransFile, open(VENDOR_TRANSACTIONS_LINE_ITEMS_FILE_NAME) as vendorTransItemsFile:
         vendorTrans = csv.writer(vendorTransFile)
         vendorTransLines = csv.reader(vendorTransItemsFile)
@@ -226,14 +234,18 @@ def main():
         txIDTotals = {}
 
         for row in vendorTransLines:
-            if(int(row[0]) > lastVendorTxIdToday):
+            txID = int(row[0])
+            productID = int(row[1])
+            quantity = float(row[2])
+
+            if(txID > lastVendorTxIdToday):
                 currDay = next(validDaysIter)
                 lastVendorTxIdToday = lastVendorTxIDEachDay[currDay]
 
-            if not int(row[0]) in txIDTotals:
-                txIDTotals[int(row[0])] = [next(product for product in productsList if product.productID == int(row[1])).sellPrice * float(row[2]), currDay]
+            if not txID in txIDTotals:
+                txIDTotals[txID] = [next(product for product in productsList if product.productID == productID).sellPrice * quantity, currDay]
             else:
-                txIDTotals[int(row[0])][0] += next(product for product in productsList if product.productID == int(row[1])).sellPrice * float(row[2])
+                txIDTotals[txID][0] += next(product for product in productsList if product.productID == productID).sellPrice * quantity
 
 
         for txID in txIDTotals:
