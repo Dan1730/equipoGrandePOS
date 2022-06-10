@@ -18,5 +18,7 @@ SELECT COUNT(*) AS rowCount FROM saleLineItem; /* should have 569 rows */
 SELECT COUNT(*) AS rowCount FROM currentinventory; /* should have 53 rows */
 SELECT COUNT(*) AS rowCount FROM vendorhistory; /* should have 6 rows */
 SELECT COUNT(*) AS rowCount FROM vendorlineitem; /* should have 143 rows */
-SELECT COUNT(*) AS rowCount FROM product; /* should have 53 rows */
-
+SELECT COUNT(*) AS rowCount FROM product; /* should have 53 rows */'
+SELECT productName, stockQuantity FROM Product p, currentinventory c WHERE p.productID = c.productID;
+SELECT productName, sum(quantity) FROM Product p, salelineitem s WHERE s.productID = p.productID GROUP BY p.productName;
+SELECT productName, count(s.*) from Product p, salelineitem s where s.productID = p.productID group by p.productName;
