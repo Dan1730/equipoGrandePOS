@@ -59,7 +59,6 @@ def readProductCSV() -> list:
     productsList = []
     with open(PRODUCT_DATA_FILE_NAME) as csvfile:
         reader = csv.reader(csvfile)
-        reader.__next__() # skip the header in the csv
         for row in reader:
 
             # create the data needed for the product and cast it to the approproate type
@@ -164,6 +163,8 @@ def main():
 
     if os.path.exists(VENDOR_TRANSACTIONS_LINE_ITEMS_FILE_NAME):
         os.remove(VENDOR_TRANSACTIONS_LINE_ITEMS_FILE_NAME)
+
+    random.seed(23) # seed the RNG to generate the same data every time
 
     #Read CSV of price data of items
     productsList = readProductCSV()
