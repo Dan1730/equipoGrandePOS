@@ -14,6 +14,8 @@ VENDOR_TRANSACTIONS_FILE_NAME = '../DatabaseTool/InitialDatabase/vendorhistory.c
 VENDOR_TRANSACTIONS_LINE_ITEMS_FILE_NAME = '../DatabaseTool/InitialDatabase/vendorlineitem.csv'
 
 # simulation values
+NUM_DAYS_TO_SIMULATE = 21
+
 RESTOCK_QUANTITY = 20
 CUSTOMER_BUDGET_MIN = 8.0
 CUSTOMER_BUDGET_MAX = 12.0
@@ -177,15 +179,15 @@ def main():
     lastVendorTxIDEachDay = {}
 
     inventory = dict.fromkeys(productsList, 0)
-    for i in range(21):
+    for i in range(NUM_DAYS_TO_SIMULATE):
         multiplier = 1.0 # used for days preceding holidays to increase sales
         if i % 7 == 0: #Sunday
             restock(inventory, i) #restock on sundays. Don't sell
             lastVendorTxIDEachDay[i] = vendorTxID
             continue
-        if i == 8 or i == 15: #holidays (last two mondays). Do not do anything
+        if i % 7 == 1 and i > (NUM_DAYS_TO_SIMULATE - 14): #holidays (last two mondays). Do not do anything
             continue
-        if i == 6 or i == 13: #saturdays before holidays
+        if (i % 7 == 6) and (i > NUM_DAYS_TO_SIMULATE - 21) and (i < NUM_DAYS_TO_SIMULATE - 7): #the two saturdays before holidays. By selecting the saturday in the second to last and third to last week.
             multiplier = 2.0
         if i % 7 == 3: #Wednesday
             restock(inventory, i) # restock on wednesday
@@ -195,36 +197,46 @@ def main():
         lastCustomerTxIDEachDay[i] = customerTxID
 
     # use the itemized csv files that have just been created to create the overall Sales csv
-    with open(SALES_FILE_NAME, "w") as salesFile, open(SALES_LINE_ITEMS_FILE_NAME) as salesLineItemsFile:
+    with open(SALES_FILE_NAME, "w") as salesFile, open(SALES_LINE_ITEMS_FILE_NAME, "r") as salesLineItemsFile:
         sales = csv.writer(salesFile)
         salesLines = csv.reader(salesLineItemsFile)
 
+        # create an iterator for each day that there was a customer sale
         validDaysIter = iter(lastCustomerTxIDEachDay.keys())
         currDay = next(validDaysIter)
+
+        # get the last tx id for the current day
         lastCustTxIdToday = lastCustomerTxIDEachDay[currDay]
 
+        # create a dict to track the totals for transaction ids and what day they happened on
+        # key is the tx id, value is a list with the total and day
+        # format is {txID: [total, day]}
         txIDTotals = {}
 
         for row in salesLines:
+
+            # get the data from the csv
             txID = int(row[0])
             productID = int(row[1])
             quantity = float(row[2])
 
+            # if we are past the last tx id for current day, advance to the next day with sales
             if(int(txID) > lastCustTxIdToday):
                 currDay = next(validDaysIter)
                 lastCustTxIdToday = lastCustomerTxIDEachDay[currDay]
 
+            # if the txID is not yet in the dictionary, add it. If it is, add to its quantity
             if not txID in txIDTotals:
                 txIDTotals[txID] = [next(product for product in productsList if product.productID == productID).sellPrice * quantity, currDay]
             else:
                 txIDTotals[txID][0] += next(product for product in productsList if product.productID == productID).sellPrice * quantity
 
-
+        # write out the data to the CSV in the correct format for the DB
         for txID in txIDTotals:
             sales.writerow([txID, DayNumberToDate(txIDTotals[txID][1]), txIDTotals[txID][0]])
         
     # exact same logic as above for the vendor transactions csv
-    with open(VENDOR_TRANSACTIONS_FILE_NAME, "w") as vendorTransFile, open(VENDOR_TRANSACTIONS_LINE_ITEMS_FILE_NAME) as vendorTransItemsFile:
+    with open(VENDOR_TRANSACTIONS_FILE_NAME, "w") as vendorTransFile, open(VENDOR_TRANSACTIONS_LINE_ITEMS_FILE_NAME, "r") as vendorTransItemsFile:
         vendorTrans = csv.writer(vendorTransFile)
         vendorTransLines = csv.reader(vendorTransItemsFile)
 
