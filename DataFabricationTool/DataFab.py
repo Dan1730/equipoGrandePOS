@@ -20,7 +20,7 @@ RESTOCK_QUANTITY = 20
 CUSTOMER_BUDGET_MIN = 8.0
 CUSTOMER_BUDGET_MAX = 12.0
 CUSTOMER_ITEM_KG_MIN = 1.0
-CUSTOMER_TIEM_KG_MAX = 7.0
+CUSTOMER_TIEM_KG_MAX = 3.0
 
 # The simulation is based on three weeks of data and each day is just incremented by one.
 # This function converts the number to the correct date, and makes the simulation start 3 Sundays
@@ -132,6 +132,17 @@ def createSell(inventory: dict):
         # choose a quantity
         desiredQuantity = random.uniform(CUSTOMER_ITEM_KG_MIN, min(CUSTOMER_TIEM_KG_MAX, inventory[desiredProduct]))
 
+        # if desired quantity will exceed customer budget, reduce the quantity
+        if desiredQuantity * desiredProduct.sellPrice > customerBudget:
+            desiredQuantity = customerBudget / desiredProduct.sellPrice
+
+        #round resired quantity to 2 decimals
+        desiredQuantity = round(desiredQuantity, 2)
+
+        #if desiredQuantity is 0, end the sale
+        if desiredQuantity <= 0:
+            break
+
         #if product is an individually sold item, just truncate the float to an int
         if desiredProduct.sellUnit == Unit.INDIVIDUAL:
             desiredQuantity = int(desiredQuantity)
@@ -225,14 +236,18 @@ def main():
                 currDay = next(validDaysIter)
                 lastCustTxIdToday = lastCustomerTxIDEachDay[currDay]
 
-            # if the txID is not yet in the dictionary, add it. If it is, add to its quantity
+            # calculate the price times quantity and round to two digits
+            priceTimesQuantity = round(next(product for product in productsList if product.productID == productID).sellPrice * quantity, 2)
+
+            # if the txID is not yet in the dictionary, add it. If it is, add to its total cost
             if not txID in txIDTotals:
-                txIDTotals[txID] = [next(product for product in productsList if product.productID == productID).sellPrice * quantity, currDay]
+                txIDTotals[txID] = [priceTimesQuantity, currDay]
             else:
-                txIDTotals[txID][0] += next(product for product in productsList if product.productID == productID).sellPrice * quantity
+                txIDTotals[txID][0] += priceTimesQuantity
 
         # write out the data to the CSV in the correct format for the DB
         for txID in txIDTotals:
+            txIDTotals[txID][0] = round(txIDTotals[txID][0], 2) # account for floating point errors
             sales.writerow([txID, DayNumberToDate(txIDTotals[txID][1]), txIDTotals[txID][0]])
         
     # exact same logic as above for the vendor transactions csv
@@ -255,13 +270,15 @@ def main():
                 currDay = next(validDaysIter)
                 lastVendorTxIdToday = lastVendorTxIDEachDay[currDay]
 
-            if not txID in txIDTotals:
-                txIDTotals[txID] = [next(product for product in productsList if product.productID == productID).sellPrice * quantity, currDay]
-            else:
-                txIDTotals[txID][0] += next(product for product in productsList if product.productID == productID).sellPrice * quantity
+            priceTimesQuantity = round(next(product for product in productsList if product.productID == productID).sellPrice * quantity, 2)
 
+            if not txID in txIDTotals:
+                txIDTotals[txID] = [priceTimesQuantity, currDay]
+            else:
+                txIDTotals[txID][0] += priceTimesQuantity
 
         for txID in txIDTotals:
+            txIDTotals[txID][0] = round(txIDTotals[txID][0], 2) # account for floating point errors
             vendorTrans.writerow([txID, DayNumberToDate(txIDTotals[txID][1]), txIDTotals[txID][0]])
 
 
