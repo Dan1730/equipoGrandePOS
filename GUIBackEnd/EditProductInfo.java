@@ -8,10 +8,15 @@ public class EditProductInfo extends JFrame {
 
     // Initializing variables
     private final JFrame frame;
+    private DatabaseInterface dbInterface;
+    private CurrentProducts currentProducs;
 
     public EditProductInfo() {
         // Create the main frame
         frame = new JFrame("Edit Product Info");
+
+        dbInterface = new DatabaseInterface();
+        currentProducs = new CurrentProducts(dbInterface);
 
         // Creating a panel
         JPanel leftPanel = new JPanel();
@@ -41,9 +46,9 @@ public class EditProductInfo extends JFrame {
         subPanel3.setLayout(new BoxLayout(subPanel3, BoxLayout.X_AXIS));
 
         // Drop down components
-        String[] options = { "kg", "bulk", "single" };
+        Unit[] options = {Unit.items, Unit.kgs};
 
-        JComboBox<String> comboBox = new JComboBox<>(options);
+        JComboBox<Unit> comboBox = new JComboBox<>(options);
 
         comboBox.setBounds(0, 0, 20, 20);
         comboBox.setMaximumSize(new Dimension(100, 100));
@@ -91,16 +96,13 @@ public class EditProductInfo extends JFrame {
 
         //// LEFT PANEL ///
         // Table components
-        String[][] data = {
-                { "1", "23" },
-                { "2", "14" }
-        };
+        String[][] data = currentProducs.getProductMatrix();
 
         // Column Names
         String[] columnNames = { "Product ID", "Product Name", "Sell Price", "Purchase Price", "Unit" };
 
         // Initializing the Table
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+        DefaultTableModel model = new DefaultTableModel(data, columnNames);
 
         JTable table = new JTable(model);
         table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
@@ -120,18 +122,28 @@ public class EditProductInfo extends JFrame {
         enterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                model.addRow(
-                        new Object[] {
-                                prodID.getText(),
-                                prodName.getText(),
-                                sell.getText(),
-                                purchase.getText(),
-                                comboBox.getItemAt(comboBox.getSelectedIndex())
-                        });
+                // // table = new JTable(1, 1);
+                // // leftPanel.add(table);
+                // String selected = "You selected " +
+                // comboBox.getItemAt(comboBox.getSelectedIndex());
+                // model.addRow(
+                //         new Object[] {
+                //                 prodID.getText(),
+                //                 prodName.getText(),
+                //                 sell.getText(),
+                //                 purchase.getText(),
+                //                 comboBox.getItemAt(comboBox.getSelectedIndex())
+                //         });
+
+                currentProducs.AddProductToProducts(prodID.getText(), prodName.getText(), sell.getText(), purchase.getText(), comboBox.getItemAt(comboBox.getSelectedIndex()));
+                String[][] updatedData = currentProducs.getProductMatrix();
+                model.setDataVector(updatedData, columnNames);
             }
         });
 
-        // When enterButton is pressed, entry is made in table
+    
+    
+        // When returnButton is pressed, entry is removed from table
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent r) {
@@ -142,9 +154,7 @@ public class EditProductInfo extends JFrame {
                 }
             }
         });
-
     }
-
     public static void main(String[] args) {
         new EditProductInfo();
     }

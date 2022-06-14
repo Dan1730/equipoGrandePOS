@@ -109,8 +109,8 @@ public class DatabaseInterface {
     public void AddTableEntry(String tableName, String ... attributes){
         try{
             String sqlStatement = "INSERT INTO " + tableName + " VALUES('" + attributes[0];
-            for(String i : attributes){
-                sqlStatement += "', '" + i;
+            for(int i = 1; i < attributes.length; i++){
+                sqlStatement += "', '" + attributes[i];
             }
             sqlStatement += "');";
 

@@ -1,6 +1,3 @@
-import java.sql.ResultSet;
-import java.util.ArrayList;
-
 class CurrentProducts {
 
     private DatabaseInterface posDatabase;
@@ -29,7 +26,7 @@ class CurrentProducts {
     }
     
     // Get list of products and product IDs
-    public String[][] getProductPIDMatrix() {
-        return posDatabase.getStringMatrix("product", "productname", "productid");
+    public String[][] getProductMatrix() {
+        return posDatabase.getStringMatrix("product", "productid", "productname", "sellprice", "purchaseprice", "purchaseunit");
     }
 }
