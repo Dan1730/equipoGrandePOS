@@ -99,14 +99,7 @@ public class EditInventory extends JFrame {
         // table.setEnabled(false);
 
         // Form the table with all products
-        for(int i = 1; i < DatabaseInterface.RowCount("currentInventory")+1; i ++){
-            model.addRow(new Object[]{
-                String.valueOf(i),
-                posDatabase.GetAttribute("product", "productName", String.valueOf(i)),
-                posDatabase.GetAttribute("currentInventory", "stockQuantity", String.valueOf(i)),
-                posDatabase.GetAttribute("currentInventory", "restockQuantity", String.valueOf(i))
-            });
-        }
+        CreateTable(posDatabase, model);
 
         // adding it to JScrollPane
         JScrollPane sp = new JScrollPane(table);
@@ -122,16 +115,39 @@ public class EditInventory extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // prodID, amountInStock, amountRestock
-                // currentInventoryObject.UpdateProductInventory(String productID, String amountInStock, String restockAmount);
+                currentInventoryObject.UpdateProductInventory(prodID.getText(), amountInStock.getText(), amountRestock.getText());
+                UpdateRow(prodID.getText(), model, amountInStock.getText(), amountRestock.getText());
             }
         });
 
     }
 
+    public void CreateTable(DatabaseInterface posDatabase, DefaultTableModel model){
+        String[][] currentInventoryMatrix = currentInventoryObject.ToStringMatrix();
+        for(int i = 1; i < currentInventoryMatrix.length; i ++){
+            model.addRow(new Object[]{
+                String.valueOf(currentInventoryMatrix[i][0]),
+                posDatabase.GetAttribute("product", "productName", String.valueOf(currentInventoryMatrix[i][0])),
+                currentInventoryMatrix[i][1],
+                currentInventoryMatrix[i][2]
+            });
+        }
+    }
+
+    public void UpdateRow(String PID, DefaultTableModel model, String stockQuantity, String restockQuanitity){
+        for(int i = 0; i < model.getRowCount(); i++){
+            if (model.getValueAt(i, 0).equals(PID)) {
+                model.setValueAt(stockQuantity, i, 2);
+                model.setValueAt(restockQuanitity, i, 3);
+                return;
+            }
+        }
+    }
+
     public static void main(String[] args) {
         DatabaseInterface posDatabase = new DatabaseInterface();
 
-        new EditInventory();
+        new EditInventory(posDatabase);
         CurrentInventory inventoryBackend = new CurrentInventory(posDatabase);
         
     }
