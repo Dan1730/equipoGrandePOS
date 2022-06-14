@@ -1,6 +1,7 @@
 	import javax.swing.*;
 	import javax.swing.table.DefaultTableModel;
 
+
 	import java.awt.*;
 	import java.awt.event.*;
 	import java.util.List;
@@ -14,8 +15,8 @@
 	private final JPanel rightPanel;
 	private final JPanel buttonLeftPanel;
 
-	private final JTable displayTable;
 
+	private final JTable displayTable;
 	private final JButton endSaleButton;
 	private final JButton removeButton;
 	private final JButton nextItemButton;
@@ -35,7 +36,6 @@
 	private final List<String> currentSaleList = new ArrayList<String>();
 	private static String currProductPrice;
 	private static Double currentSaleSum = 0.0;
-
 	private Sale currentSale;
 
 	public ReportSale(DatabaseInterface posDatabase) {
@@ -198,9 +198,8 @@
 		// }
 
 		public static void main(String args[])  {  
-		DatabaseInterface db = new DatabaseInterface();
-		ReportSale window = new ReportSale(db); 
-	}  
+			DatabaseInterface db = new DatabaseInterface();
+			ReportSale window = new ReportSale(db); 
+		}  
 
 	}
-

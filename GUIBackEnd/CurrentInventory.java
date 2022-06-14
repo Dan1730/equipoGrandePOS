@@ -6,8 +6,8 @@ public class CurrentInventory {
     }
     
     public String[][] ToStringMatrix(){
-        // Waiting on Chris lol
-        return new String[][]{{"hi"}, {"i"}};
+         // Waiting on Chris lol
+        return posDatabase.getStringMatrix("currentInventory", "productID", "stockquantity", "restockquantity");
     }
 
     public void UpdateProductInventory(String productID, String amountInStock, String restockAmount){
