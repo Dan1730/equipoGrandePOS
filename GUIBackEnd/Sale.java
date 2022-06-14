@@ -58,31 +58,52 @@ class Sale{
         posDatabase.AddTableEntry("saleHistory", entries);
 
         for(int i = 0; i < itemsInSale.size(); i++){
+            // subtract the amt sold of each object from its inventory in the currentInventory database.
+            float currentStock = Float.parseFloat(posDatabase.GetAttribute("currentInventory","stockQuantity",String.valueOf(itemsInSale.get(i).GetProductID())));
+            float newStock = currentStock - itemsInSale.get(i).GetAmount();
             
+            if (newStock < 0) {
+                newStock = 0;
+            }
+
+            posDatabase.EditAttribute("currentInventory","stockQuantity",String.valueOf(itemsInSale.get(i).GetProductID()),String.valueOf(newStock));
+
             // add the items to saleLineItem
             entries = new ArrayList<String>();
             entries.add(String.valueOf(saleID));
             entries.add(String.valueOf(itemsInSale.get(i).GetProductID()));
-            entries.add(String.valueOf(itemsInSale.get(i).GetAmount()));
+            entries.add(String.valueOf(currentStock - newStock));
             posDatabase.AddTableEntry("saleLineItem",entries);
-
-            // subtract the amt sold of each object from its inventory in the currentInventory database.
-            float currentStock = Float.parseFloat(posDatabase.GetAttribute("currentInventory","stockQuantity",String.valueOf(itemsInSale.get(i).GetProductID())));
-            float newStock = currentStock - itemsInSale.get(i).GetAmount();
-            posDatabase.EditAttribute("currentInventory","stockQuantity",String.valueOf(itemsInSale.get(i).GetProductID()),String.valueOf(newStock));
         }
     }
 
     public static void main(String[] args) {
         DatabaseInterface testDatabase = new DatabaseInterface();
         Sale testSale = new Sale(testDatabase);
-
+ 
         for (int i = 1; i < 20; i++) {
-            testSale.AddItem(i, 3);
+            testSale.AddItem(i, 500);
         }
 
         testSale.RemoveItem(5);
 
         testSale.MakeSale();
+        
+        /*
+        testDatabase.GetMaxAttribute("product", "productID");
+        testDatabase.GetAttribute("product", "productname", "1");
+        testDatabase.EditAttribute("saleLineItem","quantity","24","2.4");
+
+
+        ArrayList<String> entries = new ArrayList<String>();
+        entries.add("71");
+        entries.add("Cheese Pizza");
+        entries.add("1");
+        entries.add("2");
+        entries.add("3");
+        entries.add("4");
+        testDatabase.AddTableEntry("product",entries);
+        */
+
     }
 }
