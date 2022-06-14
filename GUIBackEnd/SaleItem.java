@@ -1,7 +1,3 @@
-import java.util.*;
-import java.sql.*;
-import java.io.*;  
-
 public class SaleItem{
     private int productID;
     private float amount;

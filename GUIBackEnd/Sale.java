@@ -1,6 +1,4 @@
-import java.util.*;
-import java.sql.*;
-import java.io.*;  
+import java.util.*; 
 import java.time.*;
 
 // Functions for reporting a sale
@@ -66,12 +64,8 @@ class Sale{
     public void MakeSale(){
 
         // add an entry to saleHistory
-        ArrayList<String> entries = new ArrayList<String>();
         int saleID = Integer.parseInt(posDatabase.GetMaxAttribute("saleHistory","saleID"))+1;
-        entries.add(String.valueOf(saleID)); // saleID
-        entries.add(String.valueOf(LocalDateTime.now().toString().substring(0,9))); // saleDate
-        entries.add(String.valueOf(TotalPrice())); // revenue
-        posDatabase.AddTableEntry("saleHistory", entries);
+        posDatabase.AddTableEntry("saleHistory", String.valueOf(saleID), String.valueOf(LocalDateTime.now().toString().substring(0,9)), String.valueOf(TotalPrice()));
 
         for(int i = 0; i < itemsInSale.size(); i++){
             // subtract the amt sold of each object from its inventory in the currentInventory database.
@@ -85,11 +79,7 @@ class Sale{
             posDatabase.EditAttribute("currentInventory","stockQuantity",String.valueOf(itemsInSale.get(i).GetProductID()),String.valueOf(newStock));
 
             // add the items to saleLineItem
-            entries = new ArrayList<String>();
-            entries.add(String.valueOf(saleID));
-            entries.add(String.valueOf(itemsInSale.get(i).GetProductID()));
-            entries.add(String.valueOf(currentStock - newStock));
-            posDatabase.AddTableEntry("saleLineItem",entries);
+            posDatabase.AddTableEntry("saleLineItem",String.valueOf(saleID), String.valueOf(itemsInSale.get(i).GetProductID()), String.valueOf(currentStock - newStock));
         }
     }
 
