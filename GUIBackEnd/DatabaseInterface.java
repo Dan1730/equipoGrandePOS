@@ -37,6 +37,24 @@ public class DatabaseInterface {
         System.out.println("Opened database successfully");
     }
 
+    public static int RowCount(String tableName) {
+        // Attempts to count the rows in the given table
+        try {
+            // Creates a statement and executres a quert returns a result set
+            //Statement executionStatement = databaseConnection.createStatement();
+            ResultSet queryResult = executionStatement.executeQuery("SELECT COUNT(*) AS rowCount FROM " + tableName + ";");
+
+            if (queryResult.next()) {
+                return queryResult.getInt("rowCount");
+            }
+        } 
+        catch (Exception e) {
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+        }
+        return 0;
+    }
+
+
     String ExecuteAttributeQuery(String queryString, String resultName) {
         try {
             ResultSet queryResult = executionStatement.executeQuery(queryString);
