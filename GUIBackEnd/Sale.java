@@ -15,8 +15,12 @@ class Sale{
         maxID = Integer.valueOf(posDatabase.GetMaxAttribute("product", "productID"));
     }
     
+    public String GetProductName(String id) {
+        return posDatabase.GetAttribute("product","productName",id);
+    }
+
     // Formats all of the items of the sale into a matrix for display in the GUI
-    public String[][] toStringMatrix() {
+    public String[][] ToStringMatrix() {
         String[][] stringMatrix = new String[itemsInSale.size()][2];
         for (int i = 0; i < itemsInSale.size(); i++) {
             stringMatrix[i][0] = posDatabase.GetAttribute("product","productName",String.valueOf(itemsInSale.get(i).GetProductID()));
@@ -26,9 +30,9 @@ class Sale{
     }
 
     // Remove an item from the order
-    public void RemoveItem(int productID){
+    public void RemoveItem(String productID){
         for(int i = 0; i < itemsInSale.size(); i++){
-            if(itemsInSale.get(i).GetProductID() == productID){
+            if(productID.equals(String.valueOf(itemsInSale.get(i).GetProductID()))){
                 itemsInSale.remove(i);
                 break;
             }
@@ -36,9 +40,11 @@ class Sale{
     }
 
     // Adds an item to the order
-    public void AddItem(int productID, float amt){
-        if (productID > 0 && productID <= maxID){
-            itemsInSale.add(new SaleItem(productID, amt));
+    public void AddItem(String productID, String amount){
+        int numberID = Integer.parseInt(productID);
+        float amt = Float.parseFloat(amount);
+        if (numberID > 0 && numberID <= maxID){
+            itemsInSale.add(new SaleItem(numberID, amt));
         }
     }
 
@@ -84,6 +90,7 @@ class Sale{
     }
 
     public static void main(String[] args) {
+        /* 
         DatabaseInterface testDatabase = new DatabaseInterface();
         Sale testSale = new Sale(testDatabase);
  
@@ -95,7 +102,6 @@ class Sale{
 
         testSale.MakeSale();
         
-        /*
         testDatabase.GetMaxAttribute("product", "productID");
         testDatabase.GetAttribute("product", "productname", "1");
         testDatabase.EditAttribute("saleLineItem","quantity","24","2.4");
