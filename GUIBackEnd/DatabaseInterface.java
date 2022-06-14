@@ -122,6 +122,11 @@ public class DatabaseInterface {
         }
     }
 
+    // remove entry (entries) from table where attributeName = attributeValue
+    public void RemoveEntryFromTable(String tableName, String attributeName, String attributeValue) {
+        ExecuteRawQuery("DELETE FROM " + tableName + " WHERE " + attributeName + "=" + attributeValue);
+    }
+
     // returns a string matrix of the specified query. Attributes are in the order provided in varargs
     public String[][] getStringMatrix(String tableName, String ... attributes) {
         ArrayList<String[]> strArrList = new ArrayList<String[]>();
@@ -159,7 +164,7 @@ public class DatabaseInterface {
             returnArray[i] = strArrList.get(i);
         }
 
-        return (String[][])returnArray;
+        return returnArray;
     }
 
     public static void main(String[] args) {
