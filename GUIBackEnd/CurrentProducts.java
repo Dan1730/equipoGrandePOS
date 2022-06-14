@@ -1,6 +1,5 @@
-import java.util.*;
-import java.sql.*;
-import java.io.*;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 
 class CurrentProducts {
 
@@ -21,22 +20,16 @@ class CurrentProducts {
             unitInt = "1";
         }
 
-        ArrayList<String> attributes;
-        attributes.add(PID);
-        attributes.add(name);
-        attributes.add(sellPrice);
-        attributes.add(unitInt);
-        attributes.add(purchasePrice);
-        attributes.add(unitInt);
-
-        posDatabase.AddTableEntry("Product", attributes);
+        posDatabase.AddTableEntry("Product", PID, name, sellPrice, unitInt, purchasePrice, unitInt);
     }
 
     // Edit existing product
     public void EditExistingProductAttribute(String PID, String attributeName, String newValue) {
-        posDatabase.AddTableEntry("Product", attributeName, PID, newValue);
+        posDatabase.EditAttribute("Product", attributeName, PID, newValue);
     }
     
     // Get list of products and product IDs
-
+    public String[][] getProductPIDMatrix() {
+        return posDatabase.getStringMatrix("product", "productname", "productid");
+    }
 }

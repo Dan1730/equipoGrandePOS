@@ -1,6 +1,5 @@
-import java.util.*;
 import java.sql.*;
-import java.io.*; 
+import java.util.ArrayList;
 
 public class DatabaseInterface {
     static Connection databaseConnection = null;
@@ -52,6 +51,16 @@ public class DatabaseInterface {
         return "Query Error: no result";
     }
 
+    ResultSet ExecuteRawQuery(String queryString) {
+        try {
+            return executionStatement.executeQuery(queryString);
+        }
+        catch (Exception e) {
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            return null;
+        }
+    }
+
     // Getting
     String GetMaxAttribute(String tableName, String columnName) {
         return ExecuteAttributeQuery("SELECT MAX(" + columnName + ") FROM " + tableName + ";", "MAX");
@@ -79,11 +88,11 @@ public class DatabaseInterface {
         }
     }
 
-    public void AddTableEntry(String tableName, ArrayList<String> entries){
+    public void AddTableEntry(String tableName, String ... attributes){
         try{
-            String sqlStatement = "INSERT INTO " + tableName + " VALUES('" + entries.get(0);
-            for(int i = 1; i < entries.size(); i++){
-                sqlStatement += "', '" + entries.get(i);
+            String sqlStatement = "INSERT INTO " + tableName + " VALUES('" + attributes[0];
+            for(String i : attributes){
+                sqlStatement += "', '" + i;
             }
             sqlStatement += "');";
 
@@ -92,6 +101,58 @@ public class DatabaseInterface {
         }
         catch (Exception e) {
             System.err.println(e.getClass().getName()+": "+e.getMessage());
+        }
+    }
+
+    // returns a string matrix of the specified query. Attributes are in the order provided in varargs
+    public String[][] getStringMatrix(String tableName, String ... attributes) {
+        ArrayList<String[]> strArrList = new ArrayList<String[]>();
+
+        // construct the SQL query
+        String sqlStatement = "SELECT " + attributes[0];
+        for(String i : attributes){
+            sqlStatement += ", " + i;
+        }
+        sqlStatement += " FROM " + tableName + ";";
+
+        System.out.println(sqlStatement);
+
+        // execute the query
+        ResultSet queryResult = ExecuteRawQuery(sqlStatement);
+        System.out.println(queryResult);
+        // convert the query result into an arrayList of String arrays
+        try {
+            while(queryResult.next()) {
+                String[] row = new String[attributes.length];
+                for(int i = 0; i < attributes.length; i++) {
+                    row[i] = queryResult.getString(attributes[i]);
+                }
+                strArrList.add(row);
+            }
+        }
+        catch(SQLException e) {
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            return null;
+        }
+        
+        // convert the arraylist of arrays of strings to a 2D string array and return
+        String[][] returnArray = new String[strArrList.size()][attributes.length];
+        for(int i = 0; i < strArrList.size(); i++) {
+            returnArray[i] = strArrList.get(i);
+        }
+
+        return (String[][])returnArray;
+    }
+
+    public static void main(String[] args) {
+        DatabaseInterface dbInterface = new DatabaseInterface();
+        String[][] matrix = dbInterface.getStringMatrix("product", "productname", "productid");
+
+        for(String[] row : matrix) {
+            for(String str : row) {
+                System.out.print(str + ", ");
+            }
+            System.out.println("");
         }
     }
 }
