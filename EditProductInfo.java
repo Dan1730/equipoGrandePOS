@@ -19,7 +19,6 @@ public class EditProductInfo extends JFrame {
 
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         rightPanel.setLayout(new GridLayout(3, 1));
-        // topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
 
         // Creating a split plane
         JSplitPane pane = new JSplitPane(SwingConstants.VERTICAL, leftPanel, rightPanel);
@@ -64,10 +63,8 @@ public class EditProductInfo extends JFrame {
 
         // Adding drop down to right
         // Buttons
-
-        JButton editButton = new JButton("Edit");
-        editButton.setBounds(50, 150, 20, 20);
-        subPanel1.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JButton removeButton = new JButton("Remove");
+        removeButton.setBounds(50, 150, 20, 20);
 
         JButton enterButton = new JButton("Enter");
         enterButton.setBounds(100, 150, 20, 20);
@@ -75,7 +72,8 @@ public class EditProductInfo extends JFrame {
         JButton homeButton = new JButton("Home");
         homeButton.setBounds(150, 150, 20, 20);
 
-        subPanel1.add(editButton);
+        subPanel1.add(Box.createRigidArea(new Dimension(50, 50)));
+        subPanel1.add(removeButton);
 
         subPanel2.add(prodID);
         subPanel2.add(prodName);
@@ -105,8 +103,9 @@ public class EditProductInfo extends JFrame {
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
 
         JTable table = new JTable(model);
+        table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         table.setBounds(30, 40, 200, 300);
-        table.setEnabled(false);
+        // table.setEnabled(false);
 
         // adding it to JScrollPane
         JScrollPane sp = new JScrollPane(table);
@@ -121,10 +120,6 @@ public class EditProductInfo extends JFrame {
         enterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // // table = new JTable(1, 1);
-                // // leftPanel.add(table);
-                // String selected = "You selected " +
-                // comboBox.getItemAt(comboBox.getSelectedIndex());
                 model.addRow(
                         new Object[] {
                                 prodID.getText(),
@@ -133,6 +128,18 @@ public class EditProductInfo extends JFrame {
                                 purchase.getText(),
                                 comboBox.getItemAt(comboBox.getSelectedIndex())
                         });
+            }
+        });
+
+        // When enterButton is pressed, entry is made in table
+        removeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent r) {
+                if (table.getSelectedRow() != -1) {
+                    // remove the selected row from the model
+                    model.removeRow(table.getSelectedRow());
+                    JOptionPane.showMessageDialog(null, "Row successfully removed");
+                }
             }
         });
 
