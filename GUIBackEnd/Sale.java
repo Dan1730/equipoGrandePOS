@@ -7,16 +7,30 @@ import java.time.*;
 class Sale{
     DatabaseInterface posDatabase;
     ArrayList<SaleItem> itemsInSale;
+    int maxID;
 
+
+    
     public Sale(DatabaseInterface posDatabase){
         itemsInSale = new ArrayList<SaleItem>();
         this.posDatabase = posDatabase;
+        maxID = Integer.valueOf(posDatabase.GetMaxAttribute("product", "productID"));
+    }
+    
+    // Formats all of the items of the sale into a matrix for display in the GUI
+    public String[][] toStringMatrix() {
+        String[][] stringMatrix = new String[itemsInSale.size()][2];
+        for (int i = 0; i < itemsInSale.size(); i++) {
+            stringMatrix[i][0] = posDatabase.GetAttribute("product","productName",String.valueOf(itemsInSale.get(i).GetProductID()));
+            stringMatrix[i][1] = String.format("%.2f",itemsInSale.get(i).GetAmount());
+        }
+        return stringMatrix;
     }
 
     // Remove an item from the order
-    public void RemoveItem(int item){
+    public void RemoveItem(int productID){
         for(int i = 0; i < itemsInSale.size(); i++){
-            if(itemsInSale.get(i).GetProductID() == item){
+            if(itemsInSale.get(i).GetProductID() == productID){
                 itemsInSale.remove(i);
                 break;
             }
@@ -24,8 +38,10 @@ class Sale{
     }
 
     // Adds an item to the order
-    public void AddItem(int item, float amt){
-        itemsInSale.add(new SaleItem(item, amt));
+    public void AddItem(int productID, float amt){
+        if (productID > 0 && productID <= maxID){
+            itemsInSale.add(new SaleItem(productID, amt));
+        }
     }
 
     // Calculates the total price of the sale
@@ -39,10 +55,10 @@ class Sale{
     }
 
     // Returns the price of a single item
-    public float GetItemPrice(int item, float amt){
+    public float GetItemPrice(int productID, float amt){
        
         // Connect to the database to find the price of the product per unit
-        float pricePerUnit = Float.parseFloat(posDatabase.GetAttribute("product","sellPrice",String.valueOf(item)));
+        float pricePerUnit = Float.parseFloat(posDatabase.GetAttribute("product","sellPrice",String.valueOf(productID)));
         return pricePerUnit * amt;
     }
 
