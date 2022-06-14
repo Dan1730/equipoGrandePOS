@@ -141,9 +141,9 @@ public class EditProductInfo extends JFrame {
             }
         });
 
-    }
     
-    // When enterButton is pressed, entry is made in table
+    
+        // When returnButton is pressed, entry is removed from table
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent r) {
@@ -154,7 +154,7 @@ public class EditProductInfo extends JFrame {
                 }
             }
         });
-
+    }
     public static void main(String[] args) {
         new EditProductInfo();
     }
