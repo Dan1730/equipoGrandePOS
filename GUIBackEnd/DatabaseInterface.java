@@ -37,15 +37,12 @@ public class DatabaseInterface {
         System.out.println("Opened database successfully");
     }
 
-    // Getting
-    String GetMaxAttribute(String tableName, String columnName) {
+    String ExecuteAttributeQuery(String queryString, String resultName) {
         try {
-            ResultSet queryResult = executionStatement.executeQuery("SELECT MAX("
-                + columnName + ") FROM " + tableName
-            + ";");
+            ResultSet queryResult = executionStatement.executeQuery(queryString);
             
             if (queryResult.next()) {
-                return queryResult.getString("max");
+                return queryResult.getString(resultName);
             }
         }
         catch (Exception e) {
@@ -53,48 +50,21 @@ public class DatabaseInterface {
         }
 
         return "Query Error: no result";
+    }
+
+    // Getting
+    String GetMaxAttribute(String tableName, String columnName) {
+        return ExecuteAttributeQuery("SELECT MAX(" + columnName + ") FROM " + tableName + ";", "MAX");
     }
 
     // Getting
     String GetAttribute(String tableName, String columnName, String ID) {
-        try {
-            String sqlStatement = "SELECT "
-                + columnName + " FROM " + tableName
-                + " WHERE productID = " + ID + ";";
-
-            System.out.println(sqlStatement);
-            ResultSet queryResult = executionStatement.executeQuery(sqlStatement);
-            
-            if (queryResult.next()) {
-                return queryResult.getString(columnName);
-            }
-        }
-        catch (Exception e) {
-            System.err.println(e.getClass().getName()+": "+e.getMessage());
-        }
-
-        return "Query Error: no result";
+        return ExecuteAttributeQuery("SELECT " + columnName + " FROM " + tableName + " WHERE productID = " + ID + ";", columnName);
     }
 
     // Getting Attrubute for a query that is not product ID based
     String GetAttribute(String tableName, String columnName, String ID, String typeID) {
-        try {
-            String sqlStatement = "SELECT "
-                + columnName + " FROM " + tableName
-                + " WHERE " + typeID + " = " + ID + ";";
-            
-            System.out.println(sqlStatement);
-            ResultSet queryResult = executionStatement.executeQuery(sqlStatement);
-            
-            if (queryResult.next()) {
-                return queryResult.getString(columnName);
-            }
-        }
-        catch (Exception e) {
-            System.err.println(e.getClass().getName()+": "+e.getMessage());
-        }
-
-        return "Query Error: no result";
+        return ExecuteAttributeQuery("SELECT " + columnName + " FROM " + tableName + " WHERE " + typeID + " = " + ID + ";", columnName);
     }
 
     public void EditAttribute(String tableName, String columnName, String ID, String newValue) {

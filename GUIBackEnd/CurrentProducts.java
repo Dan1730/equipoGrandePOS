@@ -12,7 +12,9 @@ class CurrentProducts {
     
     // Add new Product
     public void AddProductToProducts(String PID, String name, String sellPrice, String purchasePrice, Unit unit) {
-        // make sure PID is unique
+        
+        // TODO: make sure PID is unique
+
         // send query to db 
         String unitInt = "0";
         if(unit == Unit.kgs) {
@@ -32,10 +34,9 @@ class CurrentProducts {
 
     // Edit existing product
     public void EditExistingProductAttribute(String PID, String attributeName, String newValue) {
-
-        // TODO: this method
-        throw UnsupportedOperationException;
+        posDatabase.AddTableEntry("Product", attributeName, PID, newValue);
     }
+    
     // Get list of products and product IDs
 
 }
