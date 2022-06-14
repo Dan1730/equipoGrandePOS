@@ -97,7 +97,7 @@ public class ReportSale extends javax.swing.JFrame {
 			public void actionPerformed(ActionEvent ae) {
 				currentSaleSum += Double.parseDouble(currProductPrice);
 				totalPriceLabelText.setText(Double.toString(currentSaleSum));
-				System.out.println(currentSaleSum);
+				// System.out.println(currentSaleSum);
 			}
 		}); 
 
@@ -112,13 +112,12 @@ public class ReportSale extends javax.swing.JFrame {
       amountText.setMaximumSize(new Dimension(200, 20));
 		// FIXME will save the amount typed to currentSaleList ...
 		amountText.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent ae) {
-					currProductPrice = amountText.getText();
-					currentSaleList.add(currProductPrice);
-					System.out.println(currentSaleList.size());
-				}
+			public void actionPerformed(ActionEvent ae) {
+				currProductPrice = amountText.getText();
+				currentSaleList.add(currProductPrice);
+				// System.out.println(currentSaleList.size());
 			}
-		); 
+		}); 
 
 
 		String[] options = { "top fruit 1", "top fruit 2", "top fruit 3" };
@@ -182,11 +181,6 @@ public class ReportSale extends javax.swing.JFrame {
 
       pack();
 	}
-
-		// public void actionPerformed(ActionEvent e) {
-		// 	totalPriceLabelText.setText("$ 0.00 ");
-		// }
-
       public static void main(String args[])  {  
          new ReportSale(); 
    }  
