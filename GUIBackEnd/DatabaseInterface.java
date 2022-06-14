@@ -79,6 +79,18 @@ public class DatabaseInterface {
         }
     }
 
+    boolean DoesIDExistInTable(String tableName, String ID) {
+        ResultSet queryResult = ExecuteRawQuery("SELECT " + ID + " FROM " + tableName);
+        try {
+            return queryResult.next();
+        }
+        catch(SQLException e) {
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            return false;
+        }
+        
+    }
+
     // Getting
     String GetMaxAttribute(String tableName, String columnName) {
         return ExecuteAttributeQuery("SELECT MAX(" + columnName + ") FROM " + tableName + ";", "MAX");

@@ -2,6 +2,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.*;
 
 public class EditProductInfo extends JFrame {
@@ -118,24 +121,25 @@ public class EditProductInfo extends JFrame {
         frame.setSize(800, 600);
         frame.setVisible(true);
 
+        // Populate text fields when row is selected
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent event) {
+                if (table.getSelectedRow() != -1) {
+                    prodID.setText((table.getValueAt(table.getSelectedRow(), 0).toString()));
+                    prodName.setText((table.getValueAt(table.getSelectedRow(), 1).toString()));
+                    sell.setText((table.getValueAt(table.getSelectedRow(), 2).toString()));
+                    purchase.setText((table.getValueAt(table.getSelectedRow(), 3).toString()));
+                    comboBox.setSelectedItem(table.getValueAt(table.getSelectedRow(), 4));
+                }
+            }
+        });
+
         // When enterButton is pressed, entry is made in table
         enterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // // table = new JTable(1, 1);
-                // // leftPanel.add(table);
-                // String selected = "You selected " +
-                // comboBox.getItemAt(comboBox.getSelectedIndex());
-                // model.addRow(
-                //         new Object[] {
-                //                 prodID.getText(),
-                //                 prodName.getText(),
-                //                 sell.getText(),
-                //                 purchase.getText(),
-                //                 comboBox.getItemAt(comboBox.getSelectedIndex())
-                //         });
 
-                currentProducts.AddProductToProducts(prodID.getText(), prodName.getText(), sell.getText(), purchase.getText(), comboBox.getItemAt(comboBox.getSelectedIndex()));
+                currentProducts.AddOrEditProduct(prodID.getText(), prodName.getText(), sell.getText(), purchase.getText(), comboBox.getItemAt(comboBox.getSelectedIndex()));
                 String[][] updatedData = currentProducts.getProductMatrix();
                 model.setDataVector(updatedData, columnNames);
             }
@@ -148,9 +152,6 @@ public class EditProductInfo extends JFrame {
             @Override
             public void actionPerformed(ActionEvent r) {
                 if (table.getSelectedRow() != -1) {
-                    // remove the selected row from the model
-                    // model.removeRow(table.getSelectedRow());
-                    // JOptionPane.showMessageDialog(null, "Row successfully removed");
                     
                     String PIDToRemove = (String)table.getValueAt(table.getSelectedRow(), 0);
 
