@@ -9,14 +9,14 @@ public class EditProductInfo extends JFrame {
     // Initializing variables
     private final JFrame frame;
     private DatabaseInterface dbInterface;
-    private CurrentProducts currentProducs;
+    private CurrentProducts currentProducts;
 
     public EditProductInfo() {
         // Create the main frame
         frame = new JFrame("Edit Product Info");
 
         dbInterface = new DatabaseInterface();
-        currentProducs = new CurrentProducts(dbInterface);
+        currentProducts = new CurrentProducts(dbInterface);
 
         // Creating a panel
         JPanel leftPanel = new JPanel();
@@ -96,7 +96,7 @@ public class EditProductInfo extends JFrame {
 
         //// LEFT PANEL ///
         // Table components
-        String[][] data = currentProducs.getProductMatrix();
+        String[][] data = currentProducts.getProductMatrix();
 
         // Column Names
         String[] columnNames = { "Product ID", "Product Name", "Sell Price", "Purchase Price", "Unit" };
@@ -135,22 +135,28 @@ public class EditProductInfo extends JFrame {
                 //                 comboBox.getItemAt(comboBox.getSelectedIndex())
                 //         });
 
-                currentProducs.AddProductToProducts(prodID.getText(), prodName.getText(), sell.getText(), purchase.getText(), comboBox.getItemAt(comboBox.getSelectedIndex()));
-                String[][] updatedData = currentProducs.getProductMatrix();
+                currentProducts.AddProductToProducts(prodID.getText(), prodName.getText(), sell.getText(), purchase.getText(), comboBox.getItemAt(comboBox.getSelectedIndex()));
+                String[][] updatedData = currentProducts.getProductMatrix();
                 model.setDataVector(updatedData, columnNames);
             }
         });
 
     
     
-        // When returnButton is pressed, entry is removed from table
+        // When removeButton is pressed, entry is removed from table
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent r) {
                 if (table.getSelectedRow() != -1) {
                     // remove the selected row from the model
-                    model.removeRow(table.getSelectedRow());
-                    JOptionPane.showMessageDialog(null, "Row successfully removed");
+                    // model.removeRow(table.getSelectedRow());
+                    // JOptionPane.showMessageDialog(null, "Row successfully removed");
+                    
+                    String PIDToRemove = (String)table.getValueAt(table.getSelectedRow(), 0);
+
+                    currentProducts.RemoveProductFromProducts(PIDToRemove);
+                    String[][] updatedData = currentProducts.getProductMatrix();
+                    model.setDataVector(updatedData, columnNames);
                 }
             }
         });

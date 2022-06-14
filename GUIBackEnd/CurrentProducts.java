@@ -6,7 +6,7 @@ class CurrentProducts {
         this.posDatabase = posDatabase;
     }
     
-    // Add new Product
+    // Add new Product to both the product table and the currentinventory table
     public void AddProductToProducts(String PID, String name, String sellPrice, String purchasePrice, Unit unit) {
         
         // TODO: make sure PID is unique
@@ -18,6 +18,12 @@ class CurrentProducts {
         }
 
         posDatabase.AddTableEntry("Product", PID, name, sellPrice, unitInt, purchasePrice, unitInt);
+        posDatabase.AddTableEntry("currentinventory", PID, "0", "0");
+    }
+
+    public void RemoveProductFromProducts(String PID) {
+        posDatabase.RemoveEntryFromTable("product", "productid", PID);
+        posDatabase.RemoveEntryFromTable("currentinventory", "productid", PID);
     }
 
     // Edit existing product
