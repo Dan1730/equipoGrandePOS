@@ -107,6 +107,9 @@ public class EditProductInfo extends JFrame {
         //// LEFT PANEL ///
         // Table components
         String[][] data = currentProducts.getProductMatrix();
+        for(String[] row : data) {
+            row[4] = Unit.StringIntToString(row[4]);
+        }
 
         // Column Names
         String[] columnNames = { "Product ID", "Product Name", "Sell Price", "Purchase Price", "Unit" };
@@ -136,7 +139,7 @@ public class EditProductInfo extends JFrame {
                     prodName.setText((table.getValueAt(table.getSelectedRow(), 1).toString()));
                     sell.setText((table.getValueAt(table.getSelectedRow(), 2).toString()));
                     purchase.setText((table.getValueAt(table.getSelectedRow(), 3).toString()));
-                    comboBox.setSelectedItem(table.getValueAt(table.getSelectedRow(), 4));
+                    comboBox.setSelectedItem(Unit.StringToUnit(table.getValueAt(table.getSelectedRow(), 4).toString()));
                 }
             }
         });
@@ -147,7 +150,10 @@ public class EditProductInfo extends JFrame {
             public void actionPerformed(ActionEvent e) {
 
                 currentProducts.AddOrEditProduct(prodID.getText(), prodName.getText(), sell.getText(), purchase.getText(), comboBox.getItemAt(comboBox.getSelectedIndex()));
-                String[][] updatedData = posDatabase.getStringMatrix("product", "productid", "productname", "sellprice", "purchaseprice", "purchaseunit");
+                String[][] updatedData = currentProducts.getProductMatrix();
+                for(String[] row : updatedData) {
+                    row[4] = Unit.StringIntToString(row[4]);
+                }
                 model.setDataVector(updatedData, columnNames);
             }
         });
@@ -163,7 +169,7 @@ public class EditProductInfo extends JFrame {
                     String PIDToRemove = (String)table.getValueAt(table.getSelectedRow(), 0);
 
                     currentProducts.RemoveProductFromProducts(PIDToRemove);
-                    String[][] updatedData = posDatabase.getStringMatrix("product", "productid", "productname", "sellprice", "purchaseprice", "purchaseunit");
+                    String[][] updatedData = currentProducts.getProductMatrix();
                     model.setDataVector(updatedData, columnNames);
                 }
             }
