@@ -12,6 +12,7 @@ SALES_FILE_NAME = '../DatabaseTool/InitialDatabase/salehistory.csv'
 SALES_LINE_ITEMS_FILE_NAME = '../DatabaseTool/InitialDatabase/salelineItem.csv'
 VENDOR_TRANSACTIONS_FILE_NAME = '../DatabaseTool/InitialDatabase/vendorhistory.csv'
 VENDOR_TRANSACTIONS_LINE_ITEMS_FILE_NAME = '../DatabaseTool/InitialDatabase/vendorlineitem.csv'
+CURRENT_INVENTORY_FILE_NAME = '../DatabaseTool/InitialDatabase/currentinventory.csv'
 
 # simulation values
 NUM_DAYS_TO_SIMULATE = 21
@@ -95,7 +96,7 @@ def buyProduct(inventory: dict, product: Product, day: int):
     # add transacation to CSV
     with open(VENDOR_TRANSACTIONS_LINE_ITEMS_FILE_NAME, "a") as vendorTransactionLineItemsFile:
         vendorTransactionLineItems = csv.writer(vendorTransactionLineItemsFile)
-        vendorTransactionLineItems.writerow([vendorTxID, product.productID, 50])
+        vendorTransactionLineItems.writerow([vendorTxID, product.productID, RESTOCK_QUANTITY])
 
 # restock if inentory is too low
 def restock(inventory: dict, day: int):
@@ -176,6 +177,9 @@ def main():
 
     if os.path.exists(VENDOR_TRANSACTIONS_LINE_ITEMS_FILE_NAME):
         os.remove(VENDOR_TRANSACTIONS_LINE_ITEMS_FILE_NAME)
+
+    if os.path.exists(CURRENT_INVENTORY_FILE_NAME):
+        os.remove(CURRENT_INVENTORY_FILE_NAME)
 
     random.seed(23) # seed the RNG to generate the same data every time
 
@@ -281,6 +285,12 @@ def main():
             txIDTotals[txID][0] = round(txIDTotals[txID][0], 2) # account for floating point errors
             vendorTrans.writerow([txID, DayNumberToDate(txIDTotals[txID][1]), txIDTotals[txID][0]])
 
+    # export the current inventory to csv
+    with open(CURRENT_INVENTORY_FILE_NAME, "w") as currentInvFile:
+        currentInv = csv.writer(currentInvFile)
+
+        for product, amount in inventory.items():
+            currentInv.writerow([product.productID, round(amount, 2), RESTOCK_QUANTITY])
 
 if __name__ == "__main__":
     main()
