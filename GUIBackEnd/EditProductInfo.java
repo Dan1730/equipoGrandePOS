@@ -4,12 +4,20 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.*;
 
+/**
+* @author Caroline Mejia
+*/
+
 public class EditProductInfo extends JFrame {
 
     // Initializing variables
     private final JFrame frame;
     private DatabaseInterface dbInterface;
     private CurrentProducts currentProducs;
+
+    /**
+    * Class constructor that connects to a given database to edit the information of products
+    */
 
     public EditProductInfo() {
         // Create the main frame
@@ -122,26 +130,11 @@ public class EditProductInfo extends JFrame {
         enterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // // table = new JTable(1, 1);
-                // // leftPanel.add(table);
-                // String selected = "You selected " +
-                // comboBox.getItemAt(comboBox.getSelectedIndex());
-                // model.addRow(
-                //         new Object[] {
-                //                 prodID.getText(),
-                //                 prodName.getText(),
-                //                 sell.getText(),
-                //                 purchase.getText(),
-                //                 comboBox.getItemAt(comboBox.getSelectedIndex())
-                //         });
-
                 currentProducs.AddProductToProducts(prodID.getText(), prodName.getText(), sell.getText(), purchase.getText(), comboBox.getItemAt(comboBox.getSelectedIndex()));
                 String[][] updatedData = currentProducs.getProductMatrix();
                 model.setDataVector(updatedData, columnNames);
             }
         });
-
-    
     
         // When returnButton is pressed, entry is removed from table
         removeButton.addActionListener(new ActionListener() {
@@ -155,6 +148,11 @@ public class EditProductInfo extends JFrame {
             }
         });
     }
+
+    /**
+     * Function for testing the class
+     * @param args Input from the terminal
+     */
     public static void main(String[] args) {
         new EditProductInfo();
     }

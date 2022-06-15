@@ -1,11 +1,17 @@
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ * @author Anthony Bragg, Daniel Morrison, Chris Weeks
+ */
 public class DatabaseInterface {
     static Connection databaseConnection = null;
     static Statement executionStatement = null;
 
-    // Creates a connection to the database
+    /**
+     * This is the default constructor for the DatabaseInterface Class, it establishes a 
+     * connection to AWS based on information in the DatabaseUserInformation class
+     */
     DatabaseInterface() {
         // Initialize Credentials
         String username = DatabaseUserInfo.username;
@@ -35,7 +41,13 @@ public class DatabaseInterface {
     
         System.out.println("Opened database successfully");
     }
-
+    
+    /**
+     * This function counts the number of rows in a given table in the postgre SQL database
+     * @param tableName The table whose rows must be counted
+     * @return Returns the number of rows in the table
+     * @throws Exception when the given table does not exist
+     */
     public static int RowCount(String tableName) {
         // Attempts to count the rows in the given table
         try {
@@ -53,7 +65,12 @@ public class DatabaseInterface {
         return 0;
     }
 
-
+    /**
+     * This function executes a query to get a specific attribute from the postgre SQL database
+     * @param queryString queryString is the SQL command to  executed in a String format
+     * @param resultName resultName is the name of the column that the result is to be taken from
+     * @return Returns a string that represents the attribute given.
+     */
     String ExecuteAttributeQuery(String queryString, String resultName) {
         try {
             ResultSet queryResult = executionStatement.executeQuery(queryString);
@@ -69,6 +86,11 @@ public class DatabaseInterface {
         return "Query Error: no result";
     }
 
+    /**
+     * This function takes in a SQL query as a string a returns the ResultSet Object.
+     * @param queryString the SQL command to execute as a String
+     * @return Returns a ResultSet Object for the query or null if query failed
+     */
     ResultSet ExecuteRawQuery(String queryString) {
         try {
             return executionStatement.executeQuery(queryString);
@@ -79,21 +101,46 @@ public class DatabaseInterface {
         }
     }
 
-    // Getting
+    /**
+     * Retrives the maximum attribute of a column in one of our postgre SQL database's tables
+     * @param tableName The name of the table that we are pulling values from
+     * @param columnName The column that we are pulling values from
+     * @return Returns the highest value in the given table and column
+     */
     String GetMaxAttribute(String tableName, String columnName) {
         return ExecuteAttributeQuery("SELECT MAX(" + columnName + ") FROM " + tableName + ";", "MAX");
     }
 
-    // Getting
+    /**
+     * Retrieves a given attribute from the postgre SQL database
+     * @param tableName The name of the table which has the attribute
+     * @param columnName The column which has the attribute
+     * @param ID The productID in the row which has the attribute
+     * @return Returns the specified attribute from the table
+     */
     String GetAttribute(String tableName, String columnName, String ID) {
         return ExecuteAttributeQuery("SELECT " + columnName + " FROM " + tableName + " WHERE productID = " + ID + ";", columnName);
     }
 
-    // Getting Attrubute for a query that is not product ID based
+    /**
+     * Retrives a given attribute frmo the postgre SQL database where productID cannot be used to identify the correct row
+     * @param tableName The name of the table which has the attribute
+     * @param columnName The column which has the attribute
+     * @param ID The unique key that identifies the row which has the attribute
+     * @param typeID The column that the unique key is in
+     * @return Returns the specified attribute from the table
+     */
     String GetAttribute(String tableName, String columnName, String ID, String typeID) {
         return ExecuteAttributeQuery("SELECT " + columnName + " FROM " + tableName + " WHERE " + typeID + " = " + ID + ";", columnName);
     }
 
+    /**
+     * Edit an attribute for an ID in the specified table
+     * @param tableName The table name to execute the query on
+     * @param columnName The attribute name to edit
+     * @param ID The ID of the row to query for
+     * @param newValue The new value for the attribute
+     */
     public void EditAttribute(String tableName, String columnName, String ID, String newValue) {
         try{
             String sqlStatement = "UPDATE " + tableName + " SET " 
@@ -106,6 +153,12 @@ public class DatabaseInterface {
         }
     }
 
+    /**
+     * Adds a new entry to a table
+     * @param tableName The table to execute the query on
+     * @param attributes The values of the attributes of the new entry in the table. The values
+     *      should be listed in the same order that they appear in the table
+     */
     public void AddTableEntry(String tableName, String ... attributes){
         try{
             String sqlStatement = "INSERT INTO " + tableName + " VALUES('" + attributes[0];
@@ -122,7 +175,13 @@ public class DatabaseInterface {
         }
     }
 
-    // returns a string matrix of the specified query. Attributes are in the order provided in varargs
+    /**
+     * Executes a query and returns the result as a String matrix
+     * @param tableName The table to execute the query on 
+     * @param attributes The list of attributes to query on The attributes that will be pulled from the table
+     * @return Returns a 2D Array of Strings where each row is a row returned by the query and the
+     *      columns are in the order they appeared in the attributes varargs
+     */
     public String[][] getStringMatrix(String tableName, String ... attributes) {
         ArrayList<String[]> strArrList = new ArrayList<String[]>();
 
@@ -162,6 +221,10 @@ public class DatabaseInterface {
         return (String[][])returnArray;
     }
 
+    /**
+     * Function for testing the class
+     * @param args Input from the terminal
+     */
     public static void main(String[] args) {
         DatabaseInterface dbInterface = new DatabaseInterface();
         String[][] matrix = dbInterface.getStringMatrix("product", "productname", "productid");

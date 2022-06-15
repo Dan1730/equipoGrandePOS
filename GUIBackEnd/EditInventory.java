@@ -4,6 +4,9 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.*;
 
+/**
+ * @author Caroline Mejia, Juliana Leano, Daniel Morrison, Anthony Bragg
+ */
 public class EditInventory extends JFrame {
     
     private CurrentInventory currentInventoryObject;
@@ -11,6 +14,10 @@ public class EditInventory extends JFrame {
     // Initializing variables
     private final JFrame frame;
 
+    /**
+    * Class constructor that connects to a given database to edit and update the current market inventory
+    * @param posDatabase
+    */
     public EditInventory(DatabaseInterface posDatabase) {
         currentInventoryObject = new CurrentInventory(posDatabase);
 
@@ -122,6 +129,11 @@ public class EditInventory extends JFrame {
 
     }
 
+    /**
+     * Populates the model of the table in the GUI with the information found in Current Inventory and also maps the productID to the product Name
+     * @param posDatabase is a reference to the database connection, this gives the sale access to interacting with the databaseT
+     * @param model the model that represents the table
+     */
     public void CreateTable(DatabaseInterface posDatabase, DefaultTableModel model){
         String[][] currentInventoryMatrix = currentInventoryObject.ToStringMatrix();
         for(int i = 1; i < currentInventoryMatrix.length; i ++){
@@ -134,6 +146,13 @@ public class EditInventory extends JFrame {
         }
     }
 
+   /**
+    * Given a PID, scan the table for the row to update with most current information
+    * @param PID the PID of the item row to update
+    * @param model the model that represents the table
+    * @param stockQuantity the new specified stock quantity for the product
+    * @param restockQuanitity the new specified restock quantity for the product
+    */ 
     public void UpdateRow(String PID, DefaultTableModel model, String stockQuantity, String restockQuanitity){
         for(int i = 0; i < model.getRowCount(); i++){
             if (model.getValueAt(i, 0).equals(PID)) {
@@ -144,6 +163,10 @@ public class EditInventory extends JFrame {
         }
     }
 
+    /**
+     * Function for testing the class
+     * @param args Input from the terminal
+     */
     public static void main(String[] args) {
         DatabaseInterface posDatabase = new DatabaseInterface();
 
