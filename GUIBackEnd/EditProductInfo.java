@@ -147,7 +147,7 @@ public class EditProductInfo extends JFrame {
             public void actionPerformed(ActionEvent e) {
 
                 currentProducts.AddOrEditProduct(prodID.getText(), prodName.getText(), sell.getText(), purchase.getText(), comboBox.getItemAt(comboBox.getSelectedIndex()));
-                String[][] updatedData = currentProducs.getProductMatrix();
+                String[][] updatedData = posDatabase.getStringMatrix("product", "productid", "productname", "sellprice", "purchaseprice", "purchaseunit");
                 model.setDataVector(updatedData, columnNames);
             }
         });
@@ -163,7 +163,7 @@ public class EditProductInfo extends JFrame {
                     String PIDToRemove = (String)table.getValueAt(table.getSelectedRow(), 0);
 
                     currentProducts.RemoveProductFromProducts(PIDToRemove);
-                    String[][] updatedData = currentProducts.getProductMatrix();
+                    String[][] updatedData = posDatabase.getStringMatrix("product", "productid", "productname", "sellprice", "purchaseprice", "purchaseunit");
                     model.setDataVector(updatedData, columnNames);
                 }
             }

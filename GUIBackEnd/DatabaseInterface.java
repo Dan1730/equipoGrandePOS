@@ -200,8 +200,6 @@ public class DatabaseInterface {
      *      columns are in the order they appeared in the attributes varargs
      */
     public String[][] getStringMatrix(String tableName, String ... attributes) {
-        ArrayList<String[]> strArrList = new ArrayList<String[]>();
-
         // construct the SQL query
         String sqlStatement = "SELECT " + attributes[0];
         for(String i : attributes){
@@ -209,33 +207,37 @@ public class DatabaseInterface {
         }
         sqlStatement += " FROM " + tableName + ";";
 
-        System.out.println(sqlStatement);
+        return generateQueryMatrix(sqlStatement, attributes);
+    }
 
-        // execute the query
-        ResultSet queryResult = ExecuteRawQuery(sqlStatement);
-        System.out.println(queryResult);
-        // convert the query result into an arrayList of String arrays
-        try {
-            while(queryResult.next()) {
-                String[] row = new String[attributes.length];
-                for(int i = 0; i < attributes.length; i++) {
-                    row[i] = queryResult.getString(attributes[i]);
+    String[][] generateQueryMatrix (String sqlQuery, String ... attributes) {
+            ArrayList<String[]> strArrList = new ArrayList<String[]>();
+    
+            // execute the query
+            ResultSet queryResult = ExecuteRawQuery(sqlQuery);
+            System.out.println(queryResult);
+            // convert the query result into an arrayList of String arrays
+            try {
+                while(queryResult.next()) {
+                    String[] row = new String[attributes.length];
+                    for(int i = 0; i < attributes.length; i++) {
+                        row[i] = queryResult.getString(attributes[i]);
+                    }
+                    strArrList.add(row);
                 }
-                strArrList.add(row);
             }
-        }
-        catch(SQLException e) {
-            System.err.println(e.getClass().getName()+": "+e.getMessage());
-            return null;
-        }
-        
-        // convert the arraylist of arrays of strings to a 2D string array and return
-        String[][] returnArray = new String[strArrList.size()][attributes.length];
-        for(int i = 0; i < strArrList.size(); i++) {
-            returnArray[i] = strArrList.get(i);
-        }
-
-        return returnArray;
+            catch(SQLException e) {
+                System.err.println(e.getClass().getName()+": "+e.getMessage());
+                return null;
+            }
+            
+            // convert the arraylist of arrays of strings to a 2D string array and return
+            String[][] returnArray = new String[strArrList.size()][attributes.length];
+            for(int i = 0; i < strArrList.size(); i++) {
+                returnArray[i] = strArrList.get(i);
+            }
+    
+            return returnArray;
     }
 
     /**

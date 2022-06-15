@@ -16,8 +16,7 @@ class DatabaseInitialize {
         String password = DatabaseUserInfo.password;
 
         // Intitialize database information for connection
-        String databaseName = "csce315950_4db";
-        String connectionString = "jdbc:postgresql://csce-315-db.engr.tamu.edu/" + databaseName;
+        String connectionString = "jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315950_4db";
 
         // Attempt to connect to the database
         try {
@@ -34,7 +33,7 @@ class DatabaseInitialize {
 
     /* Takes data from the CSV and uploads it to the database in a table format
      - Parameter fileName must be a location of the spreadsheet in the local computer */
-    public static void ProcessCSV(String fileName, String sqlTableName, int rows, int columns) {
+    public static void ProcessCSV(String fileName, String sqlTableName, int columns) {
         // Setting up scanner and opening file
         Scanner scanner;
         try {
@@ -45,38 +44,17 @@ class DatabaseInitialize {
             System.err.println(e.getClass().getName()+": CSV File could not be opened");
             return;
         }
-        int lines = 0;
-        String[][] linesOfSpreadsheet = new String[rows][columns];
         
-        // The while loop puts data from the spreadsheet into the linesOfSpreadsheet variable
+        // The while loop puts data from the spreadsheet into the database
         while(scanner.hasNext()) {
-            lines++;
-            linesOfSpreadsheet[lines-1] = scanner.nextLine().split(",");
-        }
-        
-        // Assertion that the correct amount of data was in the file
-        // ****************** Review these assertions por favor ***********************************
-        assert lines == rows : "Rows inputted incorrectly";
-        assert linesOfSpreadsheet[0].length == columns : "Columns inputted incorrectly";
-        assert linesOfSpreadsheet[lines-1].length == columns : "Data is missing";
-        
-        String[] sqlCommands = new String[rows];
-
-        // Format CSV data into SQL commands
-        for(int i = 0; i < lines; i++) {
-            sqlCommands[i] = "INSERT INTO " + sqlTableName + " VALUES (";
-            for(int j = 0; j < columns; j++) {
-                if(j != 0) {
-                    sqlCommands[i] += ", ";
-                }
-                sqlCommands[i] += "'" + linesOfSpreadsheet[i][j] + "'";
+            String[] currentLine = scanner.nextLine().split(",");
+            String sqlCommand = "INSERT INTO " + sqlTableName + " VALUES (";
+            sqlCommand += "'" + currentLine[0] + "'";
+            for(int j = 1; j < columns; j++) {
+                sqlCommand += ", " + "'" + currentLine[j] + "'";
             }
-            sqlCommands[i] += (");");
-        }
-
-        // Run the SqlCommands to produce the database
-        for(int i = 0; i < lines; i++) {
-            RunSQL(sqlCommands[i]);
+            sqlCommand += (");");
+            RunSQL(sqlCommand);
         }
     }
 
@@ -281,25 +259,25 @@ class DatabaseInitialize {
         CreateTables();
 
         // Process data from csv file and run the associated SQL commands
-        ProcessCSV("InitialDatabase/currentinventory.csv", "currentinventory", 53, 3);
+        ProcessCSV("InitialDatabase/currentinventory.csv", "currentinventory", 3);
         System.out.println("Status Report: Current Inventory Table Completed and Populated");
 
-        ProcessCSV("InitialDatabase/product.csv", "product", 53, 6);
+        ProcessCSV("InitialDatabase/product.csv", "product", 6);
         System.out.println("Status Report: Product Table Completed and Populated");
 
-        ProcessCSV("InitialDatabase/userinformation.csv", "userinformation", 10, 4);
+        ProcessCSV("InitialDatabase/userinformation.csv", "userinformation", 4);
         System.out.println("Status Report: User Information Table Completed and Populated");
 
-        ProcessCSV("InitialDatabase/salehistory.csv", "salehistory", 409, 3);
+        ProcessCSV("InitialDatabase/salehistory.csv", "salehistory", 3);
         System.out.println("Status Report: Sale History Table Completed and Populated");
 
-        ProcessCSV("InitialDatabase/salelineitem.csv", "salelineitem", 596, 3);
+        ProcessCSV("InitialDatabase/salelineitem.csv", "salelineitem", 3);
         System.out.println("Status Report: Sale Line Item Table Completed and Populated");
 
-        ProcessCSV("InitialDatabase/vendorhistory.csv", "vendorhistory", 6, 3);
+        ProcessCSV("InitialDatabase/vendorhistory.csv", "vendorhistory", 3);
         System.out.println("Status Report: Vendor History Table Completed and Populated");
 
-        ProcessCSV("InitialDatabase/vendorlineitem.csv", "vendorlineitem", 145, 3);
+        ProcessCSV("InitialDatabase/vendorlineitem.csv", "vendorlineitem", 3);
         System.out.println("Status Report: Vendor Line Item Table Completed and Populated");
 
 
