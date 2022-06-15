@@ -16,7 +16,7 @@ public class SalesReport {
      * @return Returns a String matrix with the report that can be formatted and viewed as a table in the GUI
      */
     public String[][] generateReport(String startDate, String endDate){
-        String rangeQuery = "SELECT MIN(saleID), MAX(saleID) FROM saleHistory WHERE saleDate BETWEEN " + startDate + " AND " + endDate + ";";  
+        String rangeQuery = "SELECT MIN(saleID), MAX(saleID) FROM saleHistory WHERE saleDate BETWEEN '" + startDate + "' AND '" + endDate + "';";  
 
         String[][] rangeID = posDatabase.generateQueryMatrix(rangeQuery, "min", "max");
         String startID = rangeID[0][0];
@@ -35,7 +35,7 @@ public class SalesReport {
     public static void main(String[] args) {
         SalesReport test = new SalesReport(new DatabaseInterface());
 
-        String[][] testReport = test.generateReport("'2022-06-01'", "'2022-06-02'");
+        String[][] testReport = test.generateReport("2022-06-01", "2022-06-02");
         for (int i = 0; i < testReport.length; i++) {
             System.out.println(testReport[i][0] + " " + testReport[i][1] + " " + testReport[i][2] + " " + testReport[i][3] + " " + testReport[i][4]);
         }
