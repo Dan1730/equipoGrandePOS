@@ -24,11 +24,12 @@ public class SalesReport {
 
         System.out.println(startID + " to " + endID);
 
-        String salesReportQuery = "SELECT productName, sum(quantity) as amountSold, sum(quantity*sellprice) as revenue"
+        String salesReportQuery = "SELECT productName, sum(quantity) as amountSold, sum(quantity*sellprice) as revenue, "
+                                    + "sum(quantity*purchaseprice) as cost, sum(quantity*(sellprice-purchaseprice)) as profit"
                                     + " FROM Product p, salelineitem s WHERE s.productID = p.productID AND s.saleID BETWEEN "
                                     + startID + " AND " + endID + " GROUP BY p.productName;";
 
-        return posDatabase.generateQueryMatrix(salesReportQuery, "productName", "amountSold", "revenue");
+        return posDatabase.generateQueryMatrix(salesReportQuery, "productName", "amountSold", "revenue", "cost", "profit");
     }
 
     public static void main(String[] args) {
@@ -36,7 +37,7 @@ public class SalesReport {
 
         String[][] testReport = test.generateReport("'2022-06-01'", "'2022-06-02'");
         for (int i = 0; i < testReport.length; i++) {
-            System.out.println(testReport[i][0] + " " + testReport[i][1] + " " + testReport[i][2]);
+            System.out.println(testReport[i][0] + " " + testReport[i][1] + " " + testReport[i][2] + " " + testReport[i][3] + " " + testReport[i][4]);
         }
     }
 }
