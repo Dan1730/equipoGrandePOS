@@ -20,6 +20,7 @@ SELECT COUNT(*) AS rowCount FROM vendorhistory; -- should have 6 rows
 SELECT COUNT(*) AS rowCount FROM vendorlineitem; -- should have 145 rows
 SELECT COUNT(*) AS rowCount FROM product; -- should have 53 rows
 SELECT productName, stockQuantity FROM Product p, currentinventory c WHERE p.productID = c.productID; -- displays every product and the current inventory for that product
+SELECT saleID FROM saleHistory WHERE saleDate <= 2022-06-07 AND saleDate >= 2022-06-01;
 SELECT productName, sum(quantity) FROM Product p, salelineitem s WHERE s.productID = p.productID GROUP BY p.productName; -- displays every product and how much of each product has been sold at the store
 SELECT productName, count(s.*) FROM Product p, salelineitem s WHERE s.productID = p.productID GROUP BY p.productName; -- displays every product and how many unique orders each has been in
 SELECT saleDate, count(l.*) FROM salehistory s, salelineitem l WHERE s.saleID = l.saleID GROUP BY saledate ORDER BY saledate; -- displays every date in the shops history and how many unique items were sold on that day
@@ -31,7 +32,11 @@ SELECT productName, count(s.*) FROM Product p, vendorlineitem s WHERE s.productI
 SELECT productName, AVG(s.quantity) FROM product p, saleLineItem s WHERE p.productID = s.productID GROUP BY productName; -- displays every product and the average quantity that it is bought in
 SELECT productid FROM salelineitem WHERE EXISTS (SELECT saleid FROM salehistory WHERE salehistory.saleid = salelineitem.saleid AND revenue > 40); -- displays every product that was involved in a sale of more than 40 euros
 SELECT productid FROM salelineitem WHERE EXISTS (SELECT saleid FROM salehistory WHERE salehistory.saleid = salelineitem.saleid AND revenue > 30 AND saledate = '2022-05-23'); -- displays every product involved in a sale of more than 30 euros on May 23rd, 2022
-SELECT saleDate, SUM(p.sellPrice * l.quantity) as Profit FROM product p, saleHistory h, saleLineItem l WHERE p.productID = l.productID AND h.saleID = l.saleID GROUP BY saleDate; -- displays each sale date and the revenue from that day
+SELECT saleDate, SUM(p.sellPrice * l.quantity) AS Profit FROM product p, saleHistory h, saleLineItem l WHERE p.productID = l.productID AND h.saleID = l.saleID GROUP BY saleDate; -- displays each sale date and the revenue from that day
 SELECT productName, sum(quantity) FROM salelineitem s, salehistory h, product p  WHERE h.saleDate = '2022-05-23' AND s.saleID = h.saleID AND p.productID = s.productID GROUP BY p.productName; -- displays each product name and the quantity sold in a given day
-SELECT saleDate, SUM(p.purchasePrice * l.quantity) as Cost FROM product p, vendorHistory h, vendorLineItem l WHERE p.productID = l.productID AND h.saleID = l.saleID GROUP BY saleDate ORDER BY SaleDate; -- displays the cost of each vendor purchase
-SELECT productname FROM product WHERE EXISTS (SELECT productid FROM vendorlineitem WHERE product.productid = vendorlineitem.productid AND saleid = 1); -- displays product names for all products purchased in a given sale
+SELECT saleDate, SUM(p.purchasePrice * l.quantity) AS Cost FROM product p, vendorHistory h, vendorLineItem l WHERE p.productID = l.productID AND h.saleID = l.saleID GROUP BY saleDate ORDER BY SaleDate; -- displays the cost of each vendor purchase
+SELECT productname FROM product WHERE EXISTS (SELECT productid FROM vendorlineitem WHERE product.productid = vendorlineitem.productid AND saleid = 1); -- displays product names for all products purchased in a given vendor transaction
+
+--Sale History SQL Demo
+SELECT productName, sum(quantity) as amountSold, sum(quantity*sellprice) as revenue  FROM Product p, salelineitem s WHERE s.productID = p.productID AND s.saleID BETWEEN 95 AND 186 GROUP BY p.productName;
+SELECT MIN(saleID), MAX(saleID) FROM saleHistory WHERE saleDate BETWEEN '2022-06-03' AND '2022-06-07';  
