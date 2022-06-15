@@ -11,11 +11,6 @@
 	*/
 	public class ReportSale extends javax.swing.JFrame {
 
-		private static JTextField idText;
-		private static JTextField amountText;
-
-		private static JLabel totalPriceLabelText;
-
 		// private final JButton homeButton;
 
 		private final List<String> currentSaleList = new ArrayList<String>();
@@ -27,7 +22,9 @@
 		* @param posDatabase
 		*/
 		public ReportSale(DatabaseInterface posDatabase) {
-		
+
+
+
 		currentSale = new Sale(posDatabase);
 		
 		final JSplitPane splitPane = new JSplitPane();
@@ -43,7 +40,7 @@
 
 		/* ------------------------------------------------------------------------------- */
 		final JTable displayTable = new JTable();
-		String[] columns = {"PID","Product Name", "Amount"};
+		String[] columns = {"PID","Product Name", "Amount", "Item Price"};
 		DefaultTableModel model = new DefaultTableModel();
 		model.setColumnIdentifiers(columns);
 		displayTable.setModel(model);
@@ -56,6 +53,7 @@
 
 		
 		/* ------------------------------------------------------------------------------- */
+		JLabel totalPriceLabelText = new JLabel(" € 0.00 ");
 		
 		final JButton endSaleButton = new JButton("End Sale");
 		endSaleButton.addActionListener(new ActionListener() {
@@ -81,16 +79,21 @@
 			}
 		});
 		
+		
+		JTextField idText = new JTextField(3);
+		JTextField amountText = new JTextField(20);
+
 		final JButton nextItemButton = new JButton("Add Item");
 		nextItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				currentSale.AddItem(idText.getText(),amountText.getText());
 
-				String[] newLineItem = new String[3];
+				String[] newLineItem = new String[4];
 
 				newLineItem[0] = idText.getText();
 				newLineItem[1] = currentSale.GetProductName(idText.getText());
 				newLineItem[2] = amountText.getText();
+				newLineItem[3] = String.format("€ %.2f",currentSale.GetItemPrice(Integer.parseInt(idText.getText()), Float.parseFloat(amountText.getText())));
 
 				model.addRow(newLineItem);
 				totalPriceLabelText.setText(String.format("€ %.2f",currentSale.TotalPrice()));
@@ -99,12 +102,13 @@
 
 
 		JLabel productLabel = new JLabel("Product ID: ");
+		JLabel productTitleLabel = new JLabel("Product chosen: ");
+		JLabel productStockLabel = new JLabel("Amount left in stock: ");
 		JLabel amountLabel = new JLabel("Amount: ");
 		JLabel amountLabelDesc = new JLabel("After typing the amount, hit enter then Next Item.");
 
 		JLabel totalPriceLabel = new JLabel("Total Price: ");
 
-		JTextField amountText = new JTextField(20);
 		amountText.setMaximumSize(new Dimension(200, 20));
 		amountText.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
@@ -115,16 +119,14 @@
 			}
 		);
 		
-		JTextField idText = new JTextField(3);
 			idText.setMaximumSize(new Dimension(200, 20));
 				idText.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent ae) {
-					// Code goes here
+						productTitleLabel.setText("Product chosen: " + posDatabase.GetAttribute("product", "productName", idText.getText()));
+						productStockLabel.setText("Amount left in stock: " + posDatabase.GetAttribute("currentInventory", "stockQuantity", idText.getText()));
 					}
 				}
 			);
-
-		JLabel totalPriceLabelText = new JLabel(" € 0.00 ");
 			
 
 		JButton homeButton = new JButton("Home");
@@ -159,6 +161,8 @@
 		rightPanel.add(Box.createRigidArea(new Dimension(50, 20)));
 		rightPanel.add(productLabel);
 		rightPanel.add(idText);
+		rightPanel.add(productTitleLabel);
+		rightPanel.add(productStockLabel);
 		rightPanel.add(Box.createRigidArea(new Dimension(50, 50)));
 		rightPanel.add(amountLabel);
 		rightPanel.add(amountLabelDesc);

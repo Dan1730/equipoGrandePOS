@@ -139,13 +139,13 @@ def createSell(inventory: dict):
         #round resired quantity to 2 decimals
         desiredQuantity = round(desiredQuantity, 2)
 
-        #if desiredQuantity is 0, end the sale
-        if desiredQuantity <= 0:
-            break
-
         #if product is an individually sold item, just truncate the float to an int
         if desiredProduct.sellUnit == Unit.INDIVIDUAL:
             desiredQuantity = int(desiredQuantity)
+
+        #if desiredQuantity is 0, end the sale
+        if desiredQuantity <= 0:
+            break
 
         # add to transaction
         with open (SALES_LINE_ITEMS_FILE_NAME, "a") as salesLineItemsFile:
