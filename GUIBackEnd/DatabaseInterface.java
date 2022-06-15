@@ -100,6 +100,18 @@ public class DatabaseInterface {
             return null;
         }
     }
+    
+    boolean DoesIDExistInTable(String tableName, String ID) {
+        ResultSet queryResult = ExecuteRawQuery("SELECT " + ID + " FROM " + tableName);
+        try {
+            return queryResult.next();
+        }
+        catch(SQLException e) {
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            return false;
+        }
+        
+    }
 
     /**
      * Retrives the maximum attribute of a column in one of our postgre SQL database's tables
@@ -174,6 +186,11 @@ public class DatabaseInterface {
             System.err.println(e.getClass().getName()+": "+e.getMessage());
         }
     }
+    
+    // remove entry (entries) from table where attributeName = attributeValue
+    public void RemoveEntryFromTable(String tableName, String attributeName, String attributeValue) {
+        ExecuteRawQuery("DELETE FROM " + tableName + " WHERE " + attributeName + "=" + attributeValue);
+    }
 
     /**
      * Executes a query and returns the result as a String matrix
@@ -218,7 +235,7 @@ public class DatabaseInterface {
             returnArray[i] = strArrList.get(i);
         }
 
-        return (String[][])returnArray;
+        return returnArray;
     }
 
     /**

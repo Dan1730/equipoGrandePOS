@@ -2,6 +2,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.*;
 
 /**
@@ -13,8 +16,7 @@ public class EditProductInfo extends JFrame {
     // Initializing variables
     private final JFrame frame;
     private DatabaseInterface dbInterface;
-    private CurrentProducts currentProducs;
-
+    private CurrentProducts currentProducts;
     /**
     * Class constructor that connects to a given database to edit the information of products
     */
@@ -24,7 +26,7 @@ public class EditProductInfo extends JFrame {
         frame = new JFrame("Edit Product Info");
 
         dbInterface = new DatabaseInterface();
-        currentProducs = new CurrentProducts(dbInterface);
+        currentProducts = new CurrentProducts(dbInterface);
 
         // Creating a panel
         JPanel leftPanel = new JPanel();
@@ -104,7 +106,7 @@ public class EditProductInfo extends JFrame {
 
         //// LEFT PANEL ///
         // Table components
-        String[][] data = currentProducs.getProductMatrix();
+        String[][] data = currentProducts.getProductMatrix();
 
         // Column Names
         String[] columnNames = { "Product ID", "Product Name", "Sell Price", "Purchase Price", "Unit" };
@@ -126,24 +128,43 @@ public class EditProductInfo extends JFrame {
         frame.setSize(800, 600);
         frame.setVisible(true);
 
+        // Populate text fields when row is selected
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent event) {
+                if (table.getSelectedRow() != -1) {
+                    prodID.setText((table.getValueAt(table.getSelectedRow(), 0).toString()));
+                    prodName.setText((table.getValueAt(table.getSelectedRow(), 1).toString()));
+                    sell.setText((table.getValueAt(table.getSelectedRow(), 2).toString()));
+                    purchase.setText((table.getValueAt(table.getSelectedRow(), 3).toString()));
+                    comboBox.setSelectedItem(table.getValueAt(table.getSelectedRow(), 4));
+                }
+            }
+        });
+
         // When enterButton is pressed, entry is made in table
         enterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                currentProducs.AddProductToProducts(prodID.getText(), prodName.getText(), sell.getText(), purchase.getText(), comboBox.getItemAt(comboBox.getSelectedIndex()));
+
+                currentProducts.AddOrEditProduct(prodID.getText(), prodName.getText(), sell.getText(), purchase.getText(), comboBox.getItemAt(comboBox.getSelectedIndex()));
                 String[][] updatedData = currentProducs.getProductMatrix();
                 model.setDataVector(updatedData, columnNames);
             }
         });
+
     
-        // When returnButton is pressed, entry is removed from table
+    
+        // When removeButton is pressed, entry is removed from table
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent r) {
                 if (table.getSelectedRow() != -1) {
-                    // remove the selected row from the model
-                    model.removeRow(table.getSelectedRow());
-                    JOptionPane.showMessageDialog(null, "Row successfully removed");
+                    
+                    String PIDToRemove = (String)table.getValueAt(table.getSelectedRow(), 0);
+
+                    currentProducts.RemoveProductFromProducts(PIDToRemove);
+                    String[][] updatedData = currentProducts.getProductMatrix();
+                    model.setDataVector(updatedData, columnNames);
                 }
             }
         });

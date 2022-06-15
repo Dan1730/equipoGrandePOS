@@ -1,4 +1,13 @@
 enum Unit {
     items,
-    kgs
+    kgs;
+
+    public static String toString(Unit unit) {
+        String unitInt = "0";
+        if(unit == Unit.kgs) {
+            unitInt = "1";
+        }
+
+        return unitInt;
+    }
 }
