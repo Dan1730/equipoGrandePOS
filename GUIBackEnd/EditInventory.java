@@ -1,6 +1,8 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.*;
 import javax.swing.table.*;
 
@@ -104,6 +106,17 @@ public class EditInventory extends JFrame {
         table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         table.setBounds(30, 40, 200, 300);
         // table.setEnabled(false);
+
+        // Populate text boxes when a row is selected
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent event) {
+                if (table.getSelectedRow() != -1) {
+                    prodID.setText((table.getValueAt(table.getSelectedRow(), 0).toString()));
+                    amountInStock.setText((table.getValueAt(table.getSelectedRow(), 2).toString()));
+                    amountRestock.setText((table.getValueAt(table.getSelectedRow(), 3).toString()));
+                }
+            }
+        });
 
         // Form the table with all products
         CreateTable(posDatabase, model);
