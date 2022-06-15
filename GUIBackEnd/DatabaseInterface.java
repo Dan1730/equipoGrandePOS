@@ -101,8 +101,8 @@ public class DatabaseInterface {
         }
     }
     
-    boolean DoesIDExistInTable(String tableName, String ID) {
-        ResultSet queryResult = ExecuteRawQuery("SELECT " + ID + " FROM " + tableName);
+    boolean DoesIDExistInTable(String tableName, String attributeName, String ID) {
+        ResultSet queryResult = ExecuteRawQuery("SELECT * FROM " + tableName + " WHERE " + attributeName + "=" + ID);
         try {
             return queryResult.next();
         }
@@ -197,17 +197,17 @@ public class DatabaseInterface {
      * @param tableName The table to execute the query on 
      * @param attributes The list of attributes to query on The attributes that will be pulled from the table
      * @return Returns a 2D Array of Strings where each row is a row returned by the query and the
-     *      columns are in the order they appeared in the attributes varargs
+     *      columns are in the order they appeared in the attributes varargs.
      */
     public String[][] getStringMatrix(String tableName, String ... attributes) {
         ArrayList<String[]> strArrList = new ArrayList<String[]>();
 
         // construct the SQL query
         String sqlStatement = "SELECT " + attributes[0];
-        for(String i : attributes){
-            sqlStatement += ", " + i;
+        for(int i = 1; i < attributes.length; i++){
+            sqlStatement += ", " + attributes[i];
         }
-        sqlStatement += " FROM " + tableName + ";";
+        sqlStatement += " FROM " + tableName + " ORDER BY " + attributes[0] + ";";
 
         System.out.println(sqlStatement);
 
