@@ -10,7 +10,6 @@ public class SalesReport {
 
     /**
      * Generates a sales report of an item between two dates
-     * @param productID The ID of the product to pull a report on
      * @param startDate The beginning date in the range (Format YYYY-MM-DD)
      * @param endDate The ending date in the range (Format YYYY-MM-DD)
      * @return Returns a String matrix with the report that can be formatted and viewed as a table in the GUI
