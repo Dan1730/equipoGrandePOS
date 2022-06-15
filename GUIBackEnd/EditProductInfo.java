@@ -7,12 +7,19 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.*;
 
+/**
+* @author Caroline Mejia
+*/
+
 public class EditProductInfo extends JFrame {
 
     // Initializing variables
     private final JFrame frame;
     private DatabaseInterface dbInterface;
     private CurrentProducts currentProducts;
+    /**
+    * Class constructor that connects to a given database to edit the information of products
+    */
 
     public EditProductInfo() {
         // Create the main frame
@@ -140,7 +147,7 @@ public class EditProductInfo extends JFrame {
             public void actionPerformed(ActionEvent e) {
 
                 currentProducts.AddOrEditProduct(prodID.getText(), prodName.getText(), sell.getText(), purchase.getText(), comboBox.getItemAt(comboBox.getSelectedIndex()));
-                String[][] updatedData = currentProducts.getProductMatrix();
+                String[][] updatedData = currentProducs.getProductMatrix();
                 model.setDataVector(updatedData, columnNames);
             }
         });
@@ -162,6 +169,11 @@ public class EditProductInfo extends JFrame {
             }
         });
     }
+
+    /**
+     * Function for testing the class
+     * @param args Input from the terminal
+     */
     public static void main(String[] args) {
         new EditProductInfo();
     }

@@ -1,62 +1,48 @@
 	import javax.swing.*;
 	import javax.swing.table.DefaultTableModel;
 
-
 	import java.awt.*;
 	import java.awt.event.*;
 	import java.util.List;
 	import java.util.ArrayList;
 
+	/**
+	* @author Juliana Leano
+	*/
 	public class ReportSale extends javax.swing.JFrame {
 
-	private final JSplitPane splitPane;
+		private static JTextField idText;
+		private static JTextField amountText;
 
-	private final JPanel leftPanel;
-	private final JPanel rightPanel;
-	private final JPanel buttonLeftPanel;
+		private static JLabel totalPriceLabelText;
 
+		// private final JButton homeButton;
 
-	private final JTable displayTable;
-	private final JButton endSaleButton;
-	private final JButton removeButton;
-	private final JButton nextItemButton;
+		private final List<String> currentSaleList = new ArrayList<String>();
+		private static String currProductPrice;
+		private Sale currentSale;
 
-	private static JLabel productLabel;
-	private static JLabel amountLabel;
-	private static JLabel totalPriceLabel;
-	private static JLabel amountLabelDesc;
-
-	private static JTextField idText;
-	private static JTextField amountText;
-
-	private static JLabel totalPriceLabelText;
-
-	private final JButton homeButton;
-
-	private final List<String> currentSaleList = new ArrayList<String>();
-	private static String currProductPrice;
-	private static Double currentSaleSum = 0.0;
-	private Sale currentSale;
-
-	public ReportSale(DatabaseInterface posDatabase) {
+		/**
+		* Class constructor that connects to a given database to run a Point of Sale system and report a sale
+		* @param posDatabase
+		*/
+		public ReportSale(DatabaseInterface posDatabase) {
 		
 		currentSale = new Sale(posDatabase);
 		
-		splitPane = new JSplitPane();
+		final JSplitPane splitPane = new JSplitPane();
 
-		leftPanel = new JPanel();
-		rightPanel = new JPanel();
+		final JPanel leftPanel = new JPanel();
+		final JPanel rightPanel = new JPanel();
 
-		buttonLeftPanel = new JPanel();
+		final JPanel buttonLeftPanel = new JPanel();
 
 		rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
 		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
 		buttonLeftPanel.setLayout(new BoxLayout(buttonLeftPanel, BoxLayout.X_AXIS));
 
-		/* --------------------------------JTable function?-------------------------------- */
-		String[] columnNames = {"col1", "col2"};
-
-		displayTable = new JTable();
+		/* ------------------------------------------------------------------------------- */
+		final JTable displayTable = new JTable();
 		String[] columns = {"PID","Product Name", "Amount"};
 		DefaultTableModel model = new DefaultTableModel();
 		model.setColumnIdentifiers(columns);
@@ -71,19 +57,17 @@
 		
 		/* ------------------------------------------------------------------------------- */
 		
-		endSaleButton = new JButton("End Sale");
-		// FIXME changes the total price display to 0.00 to finish order
-		// should also clear out table
+		final JButton endSaleButton = new JButton("End Sale");
 		endSaleButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				currentSale.MakeSale();
 				model.setNumRows(0);
 				currentSale = new Sale(posDatabase);
-				totalPriceLabelText.setText("$ 0.00");
+				totalPriceLabelText.setText("€ 0.00");
 			}
 		});
 
-		removeButton = new JButton("Remove");
+		final JButton removeButton = new JButton("Remove");
 		removeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				if (displayTable.getSelectedRow() != -1) {
@@ -91,13 +75,13 @@
 					System.out.println(displayTable.getModel().getValueAt(displayTable.getSelectedRow(), 0).toString());
 					currentSale.RemoveItem(displayTable.getModel().getValueAt(displayTable.getSelectedRow(), 0).toString());
                     model.removeRow(displayTable.getSelectedRow());
-					totalPriceLabelText.setText(String.format("$ %.2f",currentSale.TotalPrice()));
+					totalPriceLabelText.setText(String.format("€ %.2f",currentSale.TotalPrice()));
                     JOptionPane.showMessageDialog(null, "Row successfully removed");
                 }
 			}
 		});
 		
-		nextItemButton = new JButton("Add Item");
+		final JButton nextItemButton = new JButton("Add Item");
 		nextItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				currentSale.AddItem(idText.getText(),amountText.getText());
@@ -109,20 +93,19 @@
 				newLineItem[2] = amountText.getText();
 
 				model.addRow(newLineItem);
-				totalPriceLabelText.setText(String.format("$ %.2f",currentSale.TotalPrice()));
+				totalPriceLabelText.setText(String.format("€ %.2f",currentSale.TotalPrice()));
 			}
 		});
 
 
-		productLabel = new JLabel("Product ID: ");
-		amountLabel = new JLabel("Amount: ");
-		amountLabelDesc = new JLabel("After typing the amount, hit enter then Next Item.");
+		JLabel productLabel = new JLabel("Product ID: ");
+		JLabel amountLabel = new JLabel("Amount: ");
+		JLabel amountLabelDesc = new JLabel("After typing the amount, hit enter then Next Item.");
 
-		totalPriceLabel = new JLabel("Total Price: ");
+		JLabel totalPriceLabel = new JLabel("Total Price: ");
 
-		amountText = new JTextField(20);
+		JTextField amountText = new JTextField(20);
 		amountText.setMaximumSize(new Dimension(200, 20));
-		// FIXME will save the amount typed to currentSaleList ...
 		amountText.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				currProductPrice = amountText.getText();
@@ -132,7 +115,7 @@
 			}
 		);
 		
-		idText = new JTextField(3);
+		JTextField idText = new JTextField(3);
 			idText.setMaximumSize(new Dimension(200, 20));
 				idText.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent ae) {
@@ -141,10 +124,10 @@
 				}
 			);
 
-		totalPriceLabelText = new JLabel(" $ 0.00 ");
+		JLabel totalPriceLabelText = new JLabel(" € 0.00 ");
 			
 
-		homeButton = new JButton("Home");
+		JButton homeButton = new JButton("Home");
 		// homeButton.addActionListener(new ActionListener() {
 		// 	public void actionPerformed(ActionEvent ae) {
 		// 		// CODE GOES HERE
@@ -193,13 +176,13 @@
 		pack();
 	}
 
-		// public void actionPerformed(ActionEvent e) {
-		// 	totalPriceLabelText.setText("$ 0.00 ");
-		// }
-
-		public static void main(String args[])  {  
-			DatabaseInterface db = new DatabaseInterface();
-			ReportSale window = new ReportSale(db); 
-		}  
+	/**
+	 * Declares an instance of the Database Interface and of the Report Sale class using the database
+	 * @param args
+	 */
+	public static void main(String args[])  {  
+		DatabaseInterface db = new DatabaseInterface();
+		ReportSale window = new ReportSale(db); 
+	}  
 
 	}
