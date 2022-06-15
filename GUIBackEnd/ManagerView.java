@@ -24,7 +24,7 @@ public class ManagerView extends JFrame {
         editProductButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 new EditProductInfo();
-                dispose();
+                frame.dispose();
             }
         });
 
@@ -32,7 +32,8 @@ public class ManagerView extends JFrame {
         trendsButton.setPreferredSize(new Dimension(200, 200));
         trendsButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                
+                new Trends();
+                frame.dispose();
             }
         });
 
@@ -40,7 +41,7 @@ public class ManagerView extends JFrame {
         vendorButton.setPreferredSize(new Dimension(200, 200));
         vendorButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                
+                // vendor class instantiated
             }
         });
 
@@ -48,7 +49,20 @@ public class ManagerView extends JFrame {
         editInventoryButton.setPreferredSize(new Dimension(200, 200));
         editInventoryButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                
+                DatabaseInterface posDatabase = new DatabaseInterface();
+                new EditInventory(posDatabase);
+                CurrentInventory inventoryBackend = new CurrentInventory(posDatabase);
+                frame.dispose();
+            }
+        });
+
+        JButton reportSaleButton = new JButton("Make a Sale");
+        reportSaleButton.setPreferredSize(new Dimension(200, 200));
+        reportSaleButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                DatabaseInterface db = new DatabaseInterface();
+		        ReportSale window = new ReportSale(db); 
+                frame.dispose();
             }
         });
 
@@ -58,6 +72,7 @@ public class ManagerView extends JFrame {
         topPanel.add(trendsButton);
         topPanel.add(vendorButton);
         topPanel.add(editInventoryButton);
+        topPanel.add(reportSaleButton);
         topPanel.add(Box.createRigidArea(new Dimension(50, 20)));
         topPanel.add(Box.createRigidArea(new Dimension(50, 20)));
 

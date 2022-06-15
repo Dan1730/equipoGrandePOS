@@ -174,6 +174,14 @@ public class EditProductInfo extends JFrame {
                 }
             }
         });
+
+        homeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new ManagerView();
+                frame.dispose();
+            }
+        });
     }
 
     /**

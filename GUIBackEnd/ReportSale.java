@@ -130,11 +130,12 @@
 			
 
 		JButton homeButton = new JButton("Home");
-		// homeButton.addActionListener(new ActionListener() {
-		// 	public void actionPerformed(ActionEvent ae) {
-		// 		// CODE GOES HERE
-		// 	}
-		// });
+		homeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				new StartPage();
+				dispose();
+			}
+		});
 
 		// Setting up the size of the frame and the adding the split pane to the frame 
 		setPreferredSize(new Dimension(800, 700));

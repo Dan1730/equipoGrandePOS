@@ -23,7 +23,8 @@ public class EmployeeView extends JFrame {
         reportSaleButton.setMaximumSize(new Dimension(200, 50));
         reportSaleButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                new ReportSale();
+                DatabaseInterface db = new DatabaseInterface();
+		        ReportSale window = new ReportSale(db); 
                 frame.dispose();
             }
         });
