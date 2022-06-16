@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class ExcessInventory {
     private DatabaseInterface dbInterface;
 
@@ -48,15 +50,23 @@ public class ExcessInventory {
         String[][] productNamesSM = dbInterface.getStringMatrix("product", "productid", "productname");
 
         // calculate ratio between inventory and amount sold
-        String[][] ratioSM = new String[amountSoldInPeriodSM.length][3];
+        ArrayList<String[]> ratioMatrix = new ArrayList<String[]>();
         for(int i = 0; i < amountSoldInPeriodSM.length; i++)
         {
-            ratioSM[i][0] = amountSoldInPeriodSM[i][0];
-            ratioSM[i][1] = productNamesSM[i][1];
-            ratioSM[i][2] = Float.toString((Float.parseFloat(amountSoldInPeriodSM[i][1]) / Float.parseFloat(stockOnDateSM[i][1])));
+            float ratio = Float.parseFloat(amountSoldInPeriodSM[i][1]) / Float.parseFloat(stockOnDateSM[i][1]);
+            if(ratio <= 0.1) {
+                ratioMatrix.add(new String[] {amountSoldInPeriodSM[i][0], productNamesSM[i][1], String.format("%.2f%%", (ratio) * 100)});
+            }
         }
 
         // return a String matrix of product ids and ratio
+        String[][] ratioSM = new String[ratioMatrix.size()][3];
+        for(int r = 0; r < ratioMatrix.size(); r++) {
+            for(int c = 0; c < ratioMatrix.get(r).length; c++) {
+                ratioSM[r][c] = ratioMatrix.get(r)[c];
+            }
+        }
+
         return ratioSM;
     }
 
