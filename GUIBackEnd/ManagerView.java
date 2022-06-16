@@ -2,10 +2,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.MouseInputAdapter;
-import javax.swing.table.*;
 
 public class ManagerView extends JFrame {
     // Initializing frame
@@ -41,7 +37,8 @@ public class ManagerView extends JFrame {
         vendorButton.setPreferredSize(new Dimension(200, 200));
         vendorButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                // vendor class instantiated
+                new VendorOrders();
+                frame.dispose();
             }
         });
 
