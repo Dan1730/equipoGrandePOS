@@ -62,8 +62,8 @@ public class Trends extends JFrame {
         JButton homeButton = new JButton("Home");
         homeButton.setPreferredSize(new Dimension(80, 20));
 
-        JLabel startDateLabel = new JLabel("Start Date: ");
-        JLabel endDateLabel = new JLabel("End Date: ");
+        JLabel startDateLabel = new JLabel("Start Date (YYYY-MM-DD): ");
+        JLabel endDateLabel = new JLabel("End Date (YYYY-MM-DD): ");
 
         subRightPanel1.add(Box.createRigidArea(new Dimension(50, 200)));
         subRightPanel1.add(startDateLabel);
