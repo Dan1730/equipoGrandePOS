@@ -2,9 +2,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.*;
 
 public class Trends extends JFrame {
@@ -12,7 +9,7 @@ public class Trends extends JFrame {
     // Initializing frame
     private final JFrame frame;
 
-    public Trends() {
+    public Trends(DatabaseInterface posDatabase) {
         // Create the main frame
         frame = new JFrame("Trends & Analytics");
 
@@ -47,17 +44,18 @@ public class Trends extends JFrame {
 
         JTextField endDate = new JTextField("End Date");
         endDate.setMaximumSize(new Dimension(200, 20));
-
-        JButton enterButton = new JButton("Enter");
-        enterButton.setPreferredSize(new Dimension(80, 20));
-
+        
         JButton homeButton = new JButton("Home");
         homeButton.setPreferredSize(new Dimension(80, 20));
 
+        JLabel startDateLabel = new JLabel("Start Date: ");
+        JLabel endDateLabel = new JLabel("End Date: ");
+
         subRightPanel1.add(Box.createRigidArea(new Dimension(50, 200)));
+        subRightPanel1.add(startDateLabel);
         subRightPanel1.add(startDate);
+        subRightPanel1.add(endDateLabel);
         subRightPanel1.add(endDate);
-        subRightPanel1.add(enterButton);
 
         subRightPanel2.add(Box.createRigidArea(new Dimension(50, 50)));
         subRightPanel2.add(homeButton);
@@ -95,13 +93,16 @@ public class Trends extends JFrame {
         // Adding a new panel into left panel for the buttons
         JPanel subLeftPanel = new JPanel();
 
+        
+        leftPanel.add(scroll);
+        leftPanel.add(subLeftPanel);
+
         subLeftPanel.add(salesReport);
         subLeftPanel.add(excessReport);
         subLeftPanel.add(restockReport);
         subLeftPanel.add(endOfDayReport);
 
-        leftPanel.add(scroll);
-        leftPanel.add(subLeftPanel);
+   
 
         // Setting frame
         frame.add(splitPane);
@@ -109,18 +110,10 @@ public class Trends extends JFrame {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Adding action listeners for the buttons
-        enterButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // If enter is selected, perform an action
-            }
-        });
-
         homeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new ManagerView();
+                new ManagerView(posDatabase);
                 frame.dispose();
             }
         });
@@ -157,6 +150,7 @@ public class Trends extends JFrame {
     }
 
     public static void main(String[] args) {
-        new Trends();
+        DatabaseInterface db = new DatabaseInterface();
+        Trends window = new Trends(db);
     }
 }
