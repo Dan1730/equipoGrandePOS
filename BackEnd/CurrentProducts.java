@@ -8,8 +8,6 @@ class CurrentProducts {
     
     // Add new Product to both the product table and the currentinventory table
     public void AddProductToProducts(String PID, String name, String sellPrice, String purchasePrice, Unit unit) {
-        
-
         String unitInt = unit.toStringInt();
 
         posDatabase.AddTableEntry("Product", PID, name, sellPrice, unitInt, purchasePrice, unitInt);
