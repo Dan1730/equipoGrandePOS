@@ -17,17 +17,14 @@ public class OrderHistory{
         String sqlConditions = "";
 
         if (date != null) {
-            System.out.println("here");
             sqlConditions += " AND saleDate = '" + date + "'";
         }
 
         if (productID != null) {
-            System.out.println("here2");
             sqlConditions += " AND l.productID = '" + productID + "'";
         }
 
         if (txId != null) {
-            System.out.println("here3");
             sqlConditions += " AND l.saleID = '" + txId + "'";
         }
 
@@ -46,7 +43,6 @@ public class OrderHistory{
      * @return The price of a single item in the sale
      */
     public float GetItemPrice(int productID, float amt){
-       
         // Connect to the database to find the price of the product per unit
         float pricePerUnit = Float.parseFloat(posDatabase.GetAttribute("product","sellPrice",String.valueOf(productID)));
         return pricePerUnit * amt;

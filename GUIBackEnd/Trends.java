@@ -10,10 +10,18 @@ import javax.swing.table.*;
 public class Trends extends JFrame {
 
     // Initializing frame
+    DatabaseInterface posDatabase;
+    SalesReport trendsReport;
+    ProductPairs productPairClass;
     private final JFrame frame;
+    
 
-    public Trends() {
+    public Trends(DatabaseInterface db) {
         // Create the main frame
+        posDatabase = db;
+        trendsReport = new SalesReport(posDatabase);
+        productPairClass = new ProductPairs(posDatabase);
+
         frame = new JFrame("Trends & Analytics");
 
         // Creating panels
@@ -41,11 +49,11 @@ public class Trends extends JFrame {
         subRightPanel1.setLayout(new BoxLayout(subRightPanel1, BoxLayout.Y_AXIS));
         subRightPanel2.setLayout(new BoxLayout(subRightPanel2, BoxLayout.X_AXIS));
 
-        JTextField startDate = new JTextField("Start Date");
+        JTextField startDate = new JTextField();
         startDate.setMaximumSize(new Dimension(200, 20));
         startDate.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JTextField endDate = new JTextField("End Date");
+        JTextField endDate = new JTextField();
         endDate.setMaximumSize(new Dimension(200, 20));
         
         JButton homeButton = new JButton("Home");
@@ -90,7 +98,7 @@ public class Trends extends JFrame {
         JButton restockReport = new JButton("Restock Report");
         restockReport.setPreferredSize(new Dimension(200, 40));
 
-        JButton endOfDayReport = new JButton("End of Day Report");
+        JButton endOfDayReport = new JButton("Product Pairs Report");
         endOfDayReport.setPreferredSize(new Dimension(200, 40));
 
         // Adding a new panel into left panel for the buttons
@@ -125,7 +133,10 @@ public class Trends extends JFrame {
         salesReport.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // If sale is selected, perform an action
+                String[] columnNames = {"Product", "Quantity Sold", "Revenue", "Cost", "Net Profit"};
+                String startDateString = startDate.getText();
+                String endDateString = endDate.getText();
+                model.setDataVector(trendsReport.generateReport(startDateString, endDateString), columnNames);
             }
         });
 
@@ -146,13 +157,16 @@ public class Trends extends JFrame {
         endOfDayReport.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // If eod is selected, perform an action
+                String[] columnNames = {"Product 1", "Product 2", "Pair Sales"};
+                String startDateString = startDate.getText();
+                String endDateString = endDate.getText();
+                model.setDataVector(productPairClass.GetBestPairs(startDateString, endDateString), columnNames);
             }
         });
 
     }
 
     public static void main(String[] args) {
-        new Trends();
+        new Trends(new DatabaseInterface());
     }
 }
