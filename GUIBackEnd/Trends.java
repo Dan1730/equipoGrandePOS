@@ -42,13 +42,13 @@ public class Trends extends JFrame {
         subRightPanel1.setLayout(new BoxLayout(subRightPanel1, BoxLayout.Y_AXIS));
         subRightPanel2.setLayout(new BoxLayout(subRightPanel2, BoxLayout.X_AXIS));
 
-        JTextField startDate = new JTextField("Start Date");
+        JTextField startDate = new JTextField();
         startDate.setMaximumSize(new Dimension(200, 20));
         startDate.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JTextField endDate = new JTextField("End Date");
+        JTextField endDate = new JTextField();
         endDate.setMaximumSize(new Dimension(200, 20));
-        
+
         JButton homeButton = new JButton("Home");
         homeButton.setPreferredSize(new Dimension(80, 20));
 
@@ -97,7 +97,6 @@ public class Trends extends JFrame {
         // Adding a new panel into left panel for the buttons
         JPanel subLeftPanel = new JPanel();
 
-        
         leftPanel.add(scroll);
         leftPanel.add(subLeftPanel);
 
@@ -105,8 +104,6 @@ public class Trends extends JFrame {
         subLeftPanel.add(excessReport);
         subLeftPanel.add(restockReport);
         subLeftPanel.add(endOfDayReport);
-
-   
 
         // Setting frame
         frame.add(splitPane);
@@ -122,11 +119,10 @@ public class Trends extends JFrame {
             }
         });
 
-        // Adding action listeners for the reports, can add to them if needed
+        // Adding action listeners for the reports
         salesReport.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // If sale is selected, perform an action
             }
         });
 
