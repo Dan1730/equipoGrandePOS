@@ -16,9 +16,6 @@ public class VendorOrders extends JFrame {
         // Create the main frame
         frame = new JFrame("Vendor Orders");
 
-        // Create the data connection
-        DatabaseInterface posDatabase = new DatabaseInterface();
-
         // Create the back-end class to draw from the database
         OrderHistory orderHistoryTool = new OrderHistory(posDatabase);
 
