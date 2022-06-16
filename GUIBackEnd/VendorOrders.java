@@ -12,12 +12,9 @@ public class VendorOrders extends JFrame {
     String dateStr;
     String pIDStr;
 
-    public VendorOrders() {
+    public VendorOrders(DatabaseInterface posDatabase) {
         // Create the main frame
         frame = new JFrame("Vendor Orders");
-
-        // Create the data connection
-        DatabaseInterface posDatabase = new DatabaseInterface();
 
         // Create the back-end class to draw from the database
         OrderHistory orderHistoryTool = new OrderHistory(posDatabase);
@@ -81,7 +78,7 @@ public class VendorOrders extends JFrame {
         homeButton.setMaximumSize(new Dimension(100, 80));
         homeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-               new ManagerView(); 
+               new ManagerView(posDatabase); 
                frame.dispose();
             }
         });
@@ -136,6 +133,7 @@ public class VendorOrders extends JFrame {
     }
 
     public static void main(String[] args) {
-        new VendorOrders();
+      DatabaseInterface db = new DatabaseInterface();  
+      VendorOrders window = new VendorOrders(db);
     }
 }

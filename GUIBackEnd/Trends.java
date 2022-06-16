@@ -2,6 +2,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.*;
 
 /**
@@ -11,10 +14,18 @@ import javax.swing.table.*;
 public class Trends extends JFrame {
 
     // Initializing frame
+    DatabaseInterface posDatabase;
+    SalesReport trendsReport;
+    ProductPairs productPairClass;
     private final JFrame frame;
+    
 
-    public Trends() {
+    public Trends(DatabaseInterface db) {
         // Create the main frame
+        posDatabase = db;
+        trendsReport = new SalesReport(posDatabase);
+        productPairClass = new ProductPairs(posDatabase);
+
         frame = new JFrame("Trends & Analytics");
 
         // Creating panels
@@ -48,7 +59,7 @@ public class Trends extends JFrame {
 
         JTextField endDate = new JTextField();
         endDate.setMaximumSize(new Dimension(200, 20));
-
+        
         JButton homeButton = new JButton("Home");
         homeButton.setPreferredSize(new Dimension(80, 20));
 
@@ -91,12 +102,13 @@ public class Trends extends JFrame {
         JButton restockReport = new JButton("Restock Report");
         restockReport.setPreferredSize(new Dimension(200, 40));
 
-        JButton endOfDayReport = new JButton("End of Day Report");
+        JButton endOfDayReport = new JButton("Product Pairs Report");
         endOfDayReport.setPreferredSize(new Dimension(200, 40));
 
         // Adding a new panel into left panel for the buttons
         JPanel subLeftPanel = new JPanel();
 
+        
         leftPanel.add(scroll);
         leftPanel.add(subLeftPanel);
 
@@ -104,6 +116,8 @@ public class Trends extends JFrame {
         subLeftPanel.add(excessReport);
         subLeftPanel.add(restockReport);
         subLeftPanel.add(endOfDayReport);
+
+   
 
         // Setting frame
         frame.add(splitPane);
@@ -120,10 +134,14 @@ public class Trends extends JFrame {
             }
         });
 
-        // Adding action listeners for the reports
+        // Adding action listeners for the reports, can add to them if needed
         salesReport.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String[] columnNames = {"Product", "Quantity Sold", "Revenue", "Cost", "Net Profit"};
+                String startDateString = startDate.getText();
+                String endDateString = endDate.getText();
+                model.setDataVector(trendsReport.generateReport(startDateString, endDateString), columnNames);
             }
         });
 
@@ -137,20 +155,34 @@ public class Trends extends JFrame {
         restockReport.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // If restock is selected, perform an action
+                String[] columnNames = {"Product", "Quantity In-Stock", "Quanity Sold", "Revenue"};
+                String startDateString = startDate.getText();
+                String endDateString = endDate.getText();
+                model.setDataVector(trendsReport.generateRestockReport(startDateString, endDateString), columnNames);
             }
         });
 
         endOfDayReport.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // If eod is selected, perform an action
+                String[] columnNames = {"Product 1", "Product 2", "Pair Sales"};
+                String startDateString = startDate.getText();
+                String endDateString = endDate.getText();
+
+                // Convert Product IDs to Product Names for display
+                String[][] pairs = productPairClass.GetBestPairs(startDateString, endDateString);
+                for(int i = 0; i < pairs.length; i++){
+                    pairs[i][0] = posDatabase.GetAttribute("product", "productName", pairs[i][0]);
+                    pairs[i][1] = posDatabase.GetAttribute("product", "productName", pairs[i][1]);
+                }
+
+                model.setDataVector(pairs, columnNames);
             }
         });
 
     }
 
     public static void main(String[] args) {
-        new Trends();
+        new Trends(new DatabaseInterface());
     }
 }

@@ -22,7 +22,7 @@ public class EditProductInfo extends JFrame {
      * of products
      */
 
-    public EditProductInfo() {
+    public EditProductInfo(DatabaseInterface posDatabase) {
         // Create the main frame
         frame = new JFrame("Edit Product Info");
 
@@ -182,7 +182,7 @@ public class EditProductInfo extends JFrame {
         homeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new ManagerView();
+                new ManagerView(posDatabase);
                 frame.dispose();
             }
         });
@@ -194,6 +194,7 @@ public class EditProductInfo extends JFrame {
      * @param args Input from the terminal
      */
     public static void main(String[] args) {
-        new EditProductInfo();
+        DatabaseInterface db = new DatabaseInterface();
+        EditProductInfo window = new EditProductInfo(db);
     }
 }
