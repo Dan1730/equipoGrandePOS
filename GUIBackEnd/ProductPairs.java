@@ -5,17 +5,31 @@ import java.util.*;
  */
 public class ProductPairs {
     DatabaseInterface posDatabase;
+    int numOfResults;
 
     ProductPairs(DatabaseInterface posDatabase) {
         this.posDatabase = posDatabase;
+        numOfResults = 10;
     }
 
-    // Returns a 5x3 matrix with each row being a common pair formatted as [product1Id, product2Id, # of occurances]
+    ProductPairs(DatabaseInterface posDatabase, int num){
+        this.posDatabase = posDatabase;
+        numOfResults = num;
+    }
+
+    /** Finds the most commonly bought pairs of products over a certain time interval
+     *  @param startDate The beginning of the time interval
+     *  @param endDate The end of the time interval
+     *  @result The most common product pairs formatted in 3 columns, each row being [product1, product2, # of occurances of the pair]
+     */
     public String[][] GetBestPairs(String startDate, String endDate){
        
         // Calculate the start and ending sale IDs given the input dates
         String rangeQuery = "SELECT MIN(saleID), MAX(saleID) FROM saleHistory WHERE saleDate BETWEEN '" + startDate + "' AND '" + endDate + "';";  
         String[][] rangeID = posDatabase.generateQueryMatrix(rangeQuery, "min", "max");
+        if(rangeID[0][0] == null || rangeID[0][1] == null){
+            throw new RuntimeException("Error: No sales occured between the dates entered");
+        }
         int startID = Integer.parseInt(rangeID[0][0]);
         int endID = Integer.parseInt(rangeID[0][1]);
 
@@ -57,27 +71,26 @@ public class ProductPairs {
             // Each mapped index combination is added to the productComparisonMatrix (except pairs of identical fruits)
             for(int j = 0; j < mappedIndexsOfItems.size()-1; j++){
                 for(int k = j+1; k < mappedIndexsOfItems.size(); k++){
-                    if(j != k){
-                        productComparisonMatrix[mappedIndexsOfItems.get(j)][mappedIndexsOfItems.get(k)]++;
-                        productComparisonMatrix[mappedIndexsOfItems.get(k)][mappedIndexsOfItems.get(j)]++;
-                    }
+                    productComparisonMatrix[mappedIndexsOfItems.get(j)][mappedIndexsOfItems.get(k)]++;
                 }
             }
         }
 
         // the final result, the top 5 pairs formatted as [Product1, Product2, # of occurances] for each row
-        String[][] finalResult = new String[5][3];
+        // String[][] finalResult = new String[numOfResults][3];
+        ArrayList<String[]> finalResult = new ArrayList<String[]>();
 
         // adding the top 5 pairs to finalResult
-        int numberAdded = 0;
-        while(numberAdded < 5){
+        // adding pairs that occur more than once to finalResult
+        boolean continueSearch = true;
+        while(continueSearch){
             int maximumMatches = productComparisonMatrix[0][0];
             int product1Index = 0;
             int product2Index = 0;
 
             // finds the largest number in productComparisonMatrix and stores the corresponding indices
-            for(int i = 0; i < productComparisonMatrix.length; i++){
-                for(int j = 0; j < productComparisonMatrix.length; j++){
+            for(int i = 0; i < productComparisonMatrix.length-1; i++){
+                for(int j = i+1; j < productComparisonMatrix.length; j++){
                     if(productComparisonMatrix[i][j] > maximumMatches){
                         maximumMatches = productComparisonMatrix[i][j];
                         product1Index = i;
@@ -88,29 +101,51 @@ public class ProductPairs {
 
             // resets the occurences of the found pair, so the next iteration finds a different pair
             productComparisonMatrix[product1Index][product2Index] = 0;
-            productComparisonMatrix[product2Index][product1Index] = 0;
 
             // remaps the found indexes back to their respective product IDs
             int product1Id = Integer.parseInt(indexToIdKey[product1Index][0]);
             int product2Id = Integer.parseInt(indexToIdKey[product2Index][0]);
 
             // stores the best pair into the correct row of finalResult
-            finalResult[numberAdded][0] = String.valueOf(product1Id);
-            finalResult[numberAdded][1] = String.valueOf(product2Id);
-            finalResult[numberAdded][2] = String.valueOf(maximumMatches);
+            // finalResult[numberAdded][0] = String.valueOf(product1Id);
+            // finalResult[numberAdded][1] = String.valueOf(product2Id);
+            // finalResult[numberAdded][2] = String.valueOf(maximumMatches);
+            if(maximumMatches > 1){
+                finalResult.add(new String[]{String.valueOf(product1Id), String.valueOf(product2Id), String.valueOf(maximumMatches)});
+            } else {
+                continueSearch = false;
+            }
+
 
             // Increments and loops again until all of the top 5 pairs have been found
-            numberAdded++;
+            // numberAdded++;
         }
-        return finalResult;
+
+        // Converts from an ArrayList<String[]> to String[][]
+        String[][] bestPairs = new String[finalResult.size()][];
+        for(int i = 0; i < finalResult.size(); i++){
+            bestPairs[i] = finalResult.get(i);
+        }
+        if(finalResult.size() == 0){
+            System.out.println("No pairs occured more than once in the given range");
+        }
+
+        return bestPairs;
     }
 
     public static void main(String[] args) {
         DatabaseInterface posDatabase = new DatabaseInterface();
 
-        ProductPairs pairFinder = new ProductPairs(posDatabase);
-        String[][] bestPairs = pairFinder.GetBestPairs("2022-06-01","2022-06-10");
-        for(int i = 0; i < 5; i++){
+        ArrayList<String[]> test = new ArrayList<String[]>();
+
+        test.add(new String[]{"Test", "Test", "Test"});
+        test.add(new String[]{"Test2", "Test2", "Test2"});
+        test.add(new String[]{"Test3", "Test3", "Test3"});
+
+        ProductPairs pairs = new ProductPairs(posDatabase);
+        String[][] bestPairs = pairs.GetBestPairs("2022-06-19","2022-06-20");    
+
+        for(int i = 0; i < bestPairs.length; i++){
             System.out.println("#" + (i+1) + ": " + bestPairs[i][0] + " and " + bestPairs[i][1] + " matched " + bestPairs[i][2] + " times.");
         }
     }

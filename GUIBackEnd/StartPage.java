@@ -33,12 +33,24 @@ public class StartPage extends JFrame {
         // Adding buttons to panel
         JPanel topPanel = new JPanel();
 
-      //   topPanel.setLayout(new GridLayout(3,2, 10, 10));
-        topPanel.setLayout(new GridLayout(4, 1, 10, 10));
+        // manually centering the EmployeeButton and ManagerButton with space on above and below
+        topPanel.setLayout(new GridLayout(4, 3, 10, 10));
+        topPanel.add(Box.createRigidArea(new Dimension(100, 100)));
+        topPanel.add(Box.createRigidArea(new Dimension(100, 100)));
+        topPanel.add(Box.createRigidArea(new Dimension(100, 100)));
+
         topPanel.add(Box.createRigidArea(new Dimension(100, 100)));
         topPanel.add(employeeButton);
+        topPanel.add(Box.createRigidArea(new Dimension(100, 100)));
+
+        topPanel.add(Box.createRigidArea(new Dimension(100, 100)));
         topPanel.add(managerButton);
         topPanel.add(Box.createRigidArea(new Dimension(100, 100)));
+
+        topPanel.add(Box.createRigidArea(new Dimension(100, 100)));
+        topPanel.add(Box.createRigidArea(new Dimension(100, 100)));
+        topPanel.add(Box.createRigidArea(new Dimension(100, 100)));
+
 
         JPanel bottomPanel = new JPanel();
         JButton logOutButton = new JButton("Log Out");

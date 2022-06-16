@@ -2,10 +2,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.*;
 import javax.swing.*;
-// import javax.swing.event.ListSelectionEvent;
-// import javax.swing.event.ListSelectionListener;
-// import javax.swing.event.MouseInputAdapter;
-// import javax.swing.table.*;
 
 public class EmployeeView extends JFrame {
     // Initializing frame
@@ -26,7 +22,8 @@ public class EmployeeView extends JFrame {
         reportSaleButton.setPreferredSize(new Dimension(300, 200));
         reportSaleButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                // new ReportSale();
+                DatabaseInterface db = new DatabaseInterface();
+		        ReportSale window = new ReportSale(db); 
                 frame.dispose();
             }
         });
