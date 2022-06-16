@@ -2,7 +2,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.*;
 import javax.swing.*;
-
+// import javax.swing.event.ListSelectionEvent;
+// import javax.swing.event.ListSelectionListener;
+// import javax.swing.event.MouseInputAdapter;
+// import javax.swing.table.*;
 
 public class EmployeeView extends JFrame {
     // Initializing frame
@@ -19,12 +22,11 @@ public class EmployeeView extends JFrame {
         topPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         // Adding report sale button
         JButton reportSaleButton = new JButton("Report Sale");
-        reportSaleButton.setBounds(-100, 0, 200, 50);
-        reportSaleButton.setMaximumSize(new Dimension(200, 50));
+        reportSaleButton.setBounds(0, 0, 900, 200);
+        reportSaleButton.setPreferredSize(new Dimension(300, 200));
         reportSaleButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                DatabaseInterface db = new DatabaseInterface();
-		        ReportSale window = new ReportSale(db); 
+                // new ReportSale();
                 frame.dispose();
             }
         });
