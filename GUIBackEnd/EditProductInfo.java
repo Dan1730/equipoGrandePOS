@@ -7,8 +7,8 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.*;
 
 /**
-* @author Caroline Mejia
-*/
+ * @author Caroline Mejia
+ */
 
 public class EditProductInfo extends JFrame {
 
@@ -16,9 +16,11 @@ public class EditProductInfo extends JFrame {
     private final JFrame frame;
     private DatabaseInterface dbInterface;
     private CurrentProducts currentProducts;
+
     /**
-    * Class constructor that connects to a given database to edit the information of products
-    */
+     * Class constructor that connects to a given database to edit the information
+     * of products
+     */
 
     public EditProductInfo(DatabaseInterface posDatabase) {
         // Create the main frame
@@ -55,7 +57,7 @@ public class EditProductInfo extends JFrame {
         subPanel3.setLayout(new BoxLayout(subPanel3, BoxLayout.X_AXIS));
 
         // Drop down components
-        Unit[] options = {Unit.items, Unit.kgs};
+        Unit[] options = { Unit.items, Unit.kgs };
 
         JComboBox<Unit> comboBox = new JComboBox<>(options);
 
@@ -64,16 +66,15 @@ public class EditProductInfo extends JFrame {
 
         // Adding text fields
         JTextField prodID = new JTextField();
-        prodID.setText("Product ID");
-
         JTextField prodName = new JTextField();
-        prodName.setText("Product Name");
-
         JTextField sell = new JTextField();
-        sell.setText("Sell Price");
-
         JTextField purchase = new JTextField();
-        purchase.setText("Purchase Price");
+
+        // Adding labels for text fields
+        JLabel prodIDLabel = new JLabel("Prouct ID:");
+        JLabel prodNameLabel = new JLabel("Prouct Name:");
+        JLabel sellLabel = new JLabel("Sell Price:");
+        JLabel purchaseLabel = new JLabel("Purchase Price:");
 
         // Adding drop down to right
         // Buttons
@@ -89,10 +90,15 @@ public class EditProductInfo extends JFrame {
         subPanel1.add(Box.createRigidArea(new Dimension(50, 50)));
         subPanel1.add(removeButton);
 
+        subPanel2.add(prodIDLabel);
         subPanel2.add(prodID);
+        subPanel2.add(prodNameLabel);
         subPanel2.add(prodName);
+        subPanel2.add(sellLabel);
         subPanel2.add(sell);
+        subPanel2.add(purchaseLabel);
         subPanel2.add(purchase);
+        subPanel2.add(Box.createRigidArea(new Dimension(20, 20)));
         subPanel2.add(comboBox);
 
         subPanel3.add(enterButton);
@@ -106,7 +112,7 @@ public class EditProductInfo extends JFrame {
         //// LEFT PANEL ///
         // Table components
         String[][] data = currentProducts.getProductMatrix();
-        for(String[] row : data) {
+        for (String[] row : data) {
             row[4] = Unit.StringIntToString(row[4]);
         }
 
@@ -148,24 +154,23 @@ public class EditProductInfo extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                currentProducts.AddOrEditProduct(prodID.getText(), prodName.getText(), sell.getText(), purchase.getText(), comboBox.getItemAt(comboBox.getSelectedIndex()));
+                currentProducts.AddOrEditProduct(prodID.getText(), prodName.getText(), sell.getText(),
+                        purchase.getText(), comboBox.getItemAt(comboBox.getSelectedIndex()));
                 String[][] updatedData = currentProducts.getProductMatrix();
-                for(String[] row : updatedData) {
+                for (String[] row : updatedData) {
                     row[4] = Unit.StringIntToString(row[4]);
                 }
                 model.setDataVector(updatedData, columnNames);
             }
         });
 
-    
-    
         // When removeButton is pressed, entry is removed from table
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent r) {
                 if (table.getSelectedRow() != -1) {
-                    
-                    String PIDToRemove = (String)table.getValueAt(table.getSelectedRow(), 0);
+
+                    String PIDToRemove = (String) table.getValueAt(table.getSelectedRow(), 0);
 
                     currentProducts.RemoveProductFromProducts(PIDToRemove);
                     String[][] updatedData = currentProducts.getProductMatrix();
@@ -185,6 +190,7 @@ public class EditProductInfo extends JFrame {
 
     /**
      * Function for testing the class
+     * 
      * @param args Input from the terminal
      */
     public static void main(String[] args) {
