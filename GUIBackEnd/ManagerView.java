@@ -7,7 +7,7 @@ public class ManagerView extends JFrame {
     // Initializing frame
     private final JFrame frame;
 
-    public ManagerView() {
+    public ManagerView(DatabaseInterface posDatabase) {
         // Create the main frame
         frame = new JFrame("Manager View");
 
@@ -19,7 +19,7 @@ public class ManagerView extends JFrame {
         editProductButton.setPreferredSize(new Dimension(200, 200));
         editProductButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                new EditProductInfo();
+                new EditProductInfo(posDatabase);
                 frame.dispose();
             }
         });
@@ -28,7 +28,7 @@ public class ManagerView extends JFrame {
         trendsButton.setPreferredSize(new Dimension(200, 200));
         trendsButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                new Trends();
+                new Trends(posDatabase);
                 frame.dispose();
             }
         });
@@ -37,7 +37,7 @@ public class ManagerView extends JFrame {
         vendorButton.setPreferredSize(new Dimension(200, 200));
         vendorButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                new VendorOrders();
+                new VendorOrders(posDatabase);
                 frame.dispose();
             }
         });
@@ -83,8 +83,19 @@ public class ManagerView extends JFrame {
             }
         });
 
+        JButton homeButton = new JButton("Start Page");
+        homeButton.setMaximumSize(new Dimension(100, 50));
+        homeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                new StartPage(posDatabase);
+                frame.dispose();
+            }
+        });
+
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
         bottomPanel.add(Box.createRigidArea(new Dimension(600, 10)));
+        bottomPanel.add(homeButton);
+        bottomPanel.add(Box.createRigidArea(new Dimension(10, 10)));
         bottomPanel.add(logOutButton);
 
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -104,6 +115,7 @@ public class ManagerView extends JFrame {
     }
 
     public static void main(String[] args) {
-        new ManagerView();
+        DatabaseInterface db = new DatabaseInterface();
+		ManagerView window = new ManagerView(db); 
     }
 }

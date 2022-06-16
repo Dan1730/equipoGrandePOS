@@ -143,7 +143,7 @@ public class EditInventory extends JFrame {
         homeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new ManagerView();
+                new ManagerView(posDatabase);
                 frame.dispose();
             }
         });

@@ -7,7 +7,7 @@ public class EmployeeView extends JFrame {
     // Initializing frame
     private final JFrame frame;
 
-    public EmployeeView() {
+    public EmployeeView(DatabaseInterface posDatabase) {
         // Create the main frame
         frame = new JFrame("Employee View");
 
@@ -45,9 +45,20 @@ public class EmployeeView extends JFrame {
             }
         });
 
+        JButton homeButton = new JButton("Start Page");
+        homeButton.setMaximumSize(new Dimension(100, 50));
+        homeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                new StartPage(posDatabase);
+                frame.dispose();
+            }
+        });
+
         // Adjusting logout button position
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
         bottomPanel.add(Box.createRigidArea(new Dimension(600, 10)));
+        bottomPanel.add(homeButton);
+        bottomPanel.add(Box.createRigidArea(new Dimension(10, 10)));
         bottomPanel.add(logOutButton);
 
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -66,6 +77,7 @@ public class EmployeeView extends JFrame {
     }
 
     public static void main(String[] args) {
-        new EmployeeView();
+        DatabaseInterface db = new DatabaseInterface();
+		EmployeeView window = new EmployeeView(db); 
     }
 }

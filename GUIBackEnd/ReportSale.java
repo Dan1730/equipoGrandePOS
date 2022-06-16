@@ -129,10 +129,10 @@
 			);
 			
 
-		JButton homeButton = new JButton("Home");
+		JButton homeButton = new JButton("Start Page");
 		homeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
-				new StartPage();
+				new StartPage(posDatabase);
 				dispose();
 			}
 		});

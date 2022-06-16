@@ -2,10 +2,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.*;
+
+/**
+ * @author Caroline Mejia
+ */
 
 public class Trends extends JFrame {
 
@@ -16,7 +17,11 @@ public class Trends extends JFrame {
     private final JFrame frame;
     
 
+<<<<<<< HEAD
     public Trends(DatabaseInterface db) {
+=======
+    public Trends(DatabaseInterface posDatabase) {
+>>>>>>> d3ef5e6c14fefff6cef6bcb7a690eb4b06313764
         // Create the main frame
         posDatabase = db;
         trendsReport = new SalesReport(posDatabase);
@@ -55,7 +60,7 @@ public class Trends extends JFrame {
 
         JTextField endDate = new JTextField();
         endDate.setMaximumSize(new Dimension(200, 20));
-        
+
         JButton homeButton = new JButton("Home");
         homeButton.setPreferredSize(new Dimension(80, 20));
 
@@ -104,7 +109,6 @@ public class Trends extends JFrame {
         // Adding a new panel into left panel for the buttons
         JPanel subLeftPanel = new JPanel();
 
-        
         leftPanel.add(scroll);
         leftPanel.add(subLeftPanel);
 
@@ -112,8 +116,6 @@ public class Trends extends JFrame {
         subLeftPanel.add(excessReport);
         subLeftPanel.add(restockReport);
         subLeftPanel.add(endOfDayReport);
-
-   
 
         // Setting frame
         frame.add(splitPane);
@@ -124,19 +126,22 @@ public class Trends extends JFrame {
         homeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new ManagerView();
+                new ManagerView(posDatabase);
                 frame.dispose();
             }
         });
 
-        // Adding action listeners for the reports, can add to them if needed
+        // Adding action listeners for the reports
         salesReport.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+<<<<<<< HEAD
                 String[] columnNames = {"Product", "Quantity Sold", "Revenue", "Cost", "Net Profit"};
                 String startDateString = startDate.getText();
                 String endDateString = endDate.getText();
                 model.setDataVector(trendsReport.generateReport(startDateString, endDateString), columnNames);
+=======
+>>>>>>> d3ef5e6c14fefff6cef6bcb7a690eb4b06313764
             }
         });
 
@@ -175,6 +180,11 @@ public class Trends extends JFrame {
     }
 
     public static void main(String[] args) {
+<<<<<<< HEAD
         new Trends(new DatabaseInterface());
+=======
+        DatabaseInterface db = new DatabaseInterface();
+        Trends window = new Trends(db);
+>>>>>>> d3ef5e6c14fefff6cef6bcb7a690eb4b06313764
     }
 }
