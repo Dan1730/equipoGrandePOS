@@ -48,17 +48,18 @@ public class Trends extends JFrame {
 
         JTextField endDate = new JTextField("End Date");
         endDate.setMaximumSize(new Dimension(200, 20));
-
-        JButton enterButton = new JButton("Enter");
-        enterButton.setPreferredSize(new Dimension(80, 20));
-
+        
         JButton homeButton = new JButton("Home");
         homeButton.setPreferredSize(new Dimension(80, 20));
 
+        JLabel startDateLabel = new JLabel("Start Date: ");
+        JLabel endDateLabel = new JLabel("End Date: ");
+
         subRightPanel1.add(Box.createRigidArea(new Dimension(50, 200)));
+        subRightPanel1.add(startDateLabel);
         subRightPanel1.add(startDate);
+        subRightPanel1.add(endDateLabel);
         subRightPanel1.add(endDate);
-        subRightPanel1.add(enterButton);
 
         subRightPanel2.add(Box.createRigidArea(new Dimension(50, 50)));
         subRightPanel2.add(homeButton);
@@ -96,27 +97,22 @@ public class Trends extends JFrame {
         // Adding a new panel into left panel for the buttons
         JPanel subLeftPanel = new JPanel();
 
+        
+        leftPanel.add(scroll);
+        leftPanel.add(subLeftPanel);
+
         subLeftPanel.add(salesReport);
         subLeftPanel.add(excessReport);
         subLeftPanel.add(restockReport);
         subLeftPanel.add(endOfDayReport);
 
-        leftPanel.add(scroll);
-        leftPanel.add(subLeftPanel);
+   
 
         // Setting frame
         frame.add(splitPane);
         frame.setSize(800, 600);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        // Adding action listeners for the buttons
-        enterButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // If enter is selected, perform an action
-            }
-        });
 
         homeButton.addActionListener(new ActionListener() {
             @Override
