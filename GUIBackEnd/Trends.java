@@ -21,7 +21,7 @@ public class Trends extends JFrame {
         JPanel rightPanel = new JPanel();
 
         leftPanel.setLayout(new GridLayout(2, 1));
-        rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
+        rightPanel.setLayout(new GridLayout(2, 1));
 
         // Creating a split pane
         JSplitPane splitPane = new JSplitPane(SwingConstants.VERTICAL, leftPanel, rightPanel);
@@ -36,29 +36,49 @@ public class Trends extends JFrame {
 
         /// RIGHT PANEL///
         // Adding elements to the right panel
+        JPanel subRightPanel1 = new JPanel();
+        JPanel subRightPanel2 = new JPanel();
+        subRightPanel1.setLayout(new BoxLayout(subRightPanel1, BoxLayout.Y_AXIS));
+        subRightPanel2.setLayout(new BoxLayout(subRightPanel2, BoxLayout.X_AXIS));
+
         JTextField startDate = new JTextField("Start Date");
         startDate.setMaximumSize(new Dimension(200, 20));
+        startDate.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JTextField endDate = new JTextField("End Date");
         endDate.setMaximumSize(new Dimension(200, 20));
 
         JButton enterButton = new JButton("Enter");
-        enterButton.setMaximumSize(new Dimension(80, 20));
+        enterButton.setPreferredSize(new Dimension(80, 20));
 
         JButton homeButton = new JButton("Home");
         homeButton.setPreferredSize(new Dimension(80, 20));
 
-        rightPanel.add(startDate);
-        rightPanel.add(endDate);
-        rightPanel.add(enterButton);
-        rightPanel.add(Box.createRigidArea(new Dimension(50, 50)));
-        rightPanel.add(homeButton);
-        rightPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        subRightPanel1.add(Box.createRigidArea(new Dimension(50, 200)));
+        subRightPanel1.add(startDate);
+        subRightPanel1.add(endDate);
+        subRightPanel1.add(enterButton);
+
+        subRightPanel2.add(Box.createRigidArea(new Dimension(50, 50)));
+        subRightPanel2.add(homeButton);
+
+        rightPanel.add(subRightPanel1);
+        rightPanel.add(subRightPanel2);
 
         /// LEFT PANEL///
         // Adding elements to the left panel
-        JTable table = new JTable();
+        DefaultTableModel model = new DefaultTableModel();
+
+        JTable table = new JTable(model);
+
+        // You can use the lines below to set the column names
+        // String[] columnNames = { "Product ID", "Product Name", "Sell Price",
+        // "Purchase Price", "Unit" };
+        // model.setColumnIdentifiers(columnNames);
+
         table.setEnabled(false);
+
+        JScrollPane scroll = new JScrollPane(table);
 
         JButton salesReport = new JButton("Sales Report");
         salesReport.setPreferredSize(new Dimension(200, 40));
@@ -80,7 +100,7 @@ public class Trends extends JFrame {
         subLeftPanel.add(restockReport);
         subLeftPanel.add(endOfDayReport);
 
-        leftPanel.add(table);
+        leftPanel.add(scroll);
         leftPanel.add(subLeftPanel);
 
         // Setting frame
@@ -88,6 +108,52 @@ public class Trends extends JFrame {
         frame.setSize(800, 600);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Adding action listeners for the buttons
+        enterButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // If enter is selected, perform an action
+            }
+        });
+
+        homeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new ManagerView();
+                frame.dispose();
+            }
+        });
+
+        // Adding action listeners for the reports, can add to them if needed
+        salesReport.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // If sale is selected, perform an action
+            }
+        });
+
+        excessReport.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // If excess is selected, perform an action
+            }
+        });
+
+        restockReport.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // If restock is selected, perform an action
+            }
+        });
+
+        endOfDayReport.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // If eod is selected, perform an action
+            }
+        });
+
     }
 
     public static void main(String[] args) {
