@@ -13,6 +13,7 @@ public class Trends extends JFrame {
     // Initializing frame
     DatabaseInterface posDatabase;
     SalesReport trendsReport;
+    ExcessInventory excessReportClass;
     ProductPairs productPairClass;
     private final JFrame frame;
     
@@ -22,6 +23,7 @@ public class Trends extends JFrame {
         posDatabase = db;
         trendsReport = new SalesReport(posDatabase);
         productPairClass = new ProductPairs(posDatabase);
+        excessReportClass = new ExcessInventory(posDatabase);
 
         frame = new JFrame("Trends & Analytics");
 
@@ -155,7 +157,13 @@ public class Trends extends JFrame {
         excessReport.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // If excess is selected, perform an action
+                String[] columnNames = {"ID", "Product", "Percent"};
+                String startDateString = startDate.getText();
+                String endDateString = endDate.getText();
+
+                String[][] excessMatrix = excessReportClass.CalculatePercentExcessInventory(startDateString, endDateString);
+
+                model.setDataVector(excessMatrix, columnNames);
             }
         });
 
