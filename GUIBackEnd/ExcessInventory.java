@@ -32,22 +32,22 @@ public class ExcessInventory {
     public String[][] CalculatePercentExcessInventory(String startDate, String endDate) {
         
         // Get Start Inventory
-        String[][] minMaxCustSaleIDSM = dbInterface.generateQueryMatrix(String.format(SaleHistoryFString, startDate, endDate), "minSaleID", "maxSaleID");
+        String[][] minMaxCustSaleIDSM = dbInterface.GenerateQueryMatrix(String.format(SaleHistoryFString, startDate, endDate), "minSaleID", "maxSaleID");
 
-        String[][] minMaxVendSaleIDSM = dbInterface.generateQueryMatrix(String.format(VendorHistoryFString, startDate, endDate), "minSaleID", "maxSaleID");
+        String[][] minMaxVendSaleIDSM = dbInterface.GenerateQueryMatrix(String.format(VendorHistoryFString, startDate, endDate), "minSaleID", "maxSaleID");
 
         String firstSID = minMaxCustSaleIDSM[0][0];
         String lastSID = minMaxCustSaleIDSM[0][1];
         String firstVID = minMaxVendSaleIDSM[0][0];
         // String lastVID = minMaxCustSaleIDSM[0][1];
 
-        String[][] stockOnDateSM = dbInterface.generateQueryMatrix(String.format(pastInventoryFString, firstSID, firstVID), "productid", "stockOnDate");
+        String[][] stockOnDateSM = dbInterface.GenerateQueryMatrix(String.format(pastInventoryFString, firstSID, firstVID), "productid", "stockOnDate");
 
         // Get Amount Sold between startDate and endDate
-        String[][] amountSoldInPeriodSM = dbInterface.generateQueryMatrix(String.format(SaleLineItemFString, firstSID, lastSID), "productid", "amountsold");
+        String[][] amountSoldInPeriodSM = dbInterface.GenerateQueryMatrix(String.format(SaleLineItemFString, firstSID, lastSID), "productid", "amountsold");
 
         // Get Product names
-        String[][] productNamesSM = dbInterface.getStringMatrix("product", "productid", "productname");
+        String[][] productNamesSM = dbInterface.GetStringMatrix("product", "productid", "productname");
 
         // calculate ratio between inventory and amount sold
         ArrayList<String[]> ratioMatrix = new ArrayList<String[]>();

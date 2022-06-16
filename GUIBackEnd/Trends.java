@@ -83,11 +83,6 @@ public class Trends extends JFrame {
 
         JTable table = new JTable(model);
 
-        // You can use the lines below to set the column names
-        // String[] columnNames = { "Product ID", "Product Name", "Sell Price",
-        // "Purchase Price", "Unit" };
-        // model.setColumnIdentifiers(columnNames);
-
         table.setEnabled(false);
 
         JScrollPane scroll = new JScrollPane(table);
@@ -106,7 +101,6 @@ public class Trends extends JFrame {
 
         // Adding a new panel into left panel for the buttons
         JPanel subLeftPanel = new JPanel();
-
         
         leftPanel.add(scroll);
         leftPanel.add(subLeftPanel);
@@ -115,9 +109,7 @@ public class Trends extends JFrame {
         subLeftPanel.add(excessReport);
         subLeftPanel.add(restockReport);
         subLeftPanel.add(endOfDayReport);
-
    
-
         // Setting frame
         frame.add(splitPane);
         frame.setSize(800, 600);
@@ -141,7 +133,7 @@ public class Trends extends JFrame {
                 String startDateString = startDate.getText();
                 String endDateString = endDate.getText();
 
-                String[][] salesReportMatrix = trendsReport.generateReport(startDateString, endDateString);
+                String[][] salesReportMatrix = trendsReport.GenerateReport(startDateString, endDateString);
 
                 for(int i = 0; i < salesReportMatrix.length; i++){
                     salesReportMatrix[i][1] = String.format("%.2f",Float.parseFloat(salesReportMatrix[i][1]));
@@ -175,7 +167,7 @@ public class Trends extends JFrame {
                 String startDateString = startDate.getText();
                 String endDateString = endDate.getText();
 
-                String[][] restockReportMatrix = trendsReport.generateRestockReport(startDateString, endDateString);
+                String[][] restockReportMatrix = trendsReport.GenerateRestockReport(startDateString, endDateString);
 
                 for(int i = 0; i < restockReportMatrix.length; i++){
                     restockReportMatrix[i][1] = String.format("%.2f",Float.parseFloat(restockReportMatrix[i][1]));

@@ -63,11 +63,7 @@ public class EditInventory extends JFrame {
         JTextField amountRestock = new JTextField();
         amountRestock.setText("amountRestock");
 
-        // Buttons
-
-         //   JButton removeButton = new JButton("Remove");
-         //   removeButton.setBounds(50, 150, 20, 20);
-
+        // Declaring and adding buttons to the subpanels
         JButton editButton = new JButton("Edit");
         editButton.setBounds(100, 150, 20, 20);
 
@@ -78,7 +74,6 @@ public class EditInventory extends JFrame {
         homeButton.setBounds(150, 150, 20, 20);
 
         subPanel1.add(Box.createRigidArea(new Dimension(50, 50)));
-         //   subPanel1.add(removeButton);
         subPanel1.add(editButton);
 
         subPanel2.add(prodID);

@@ -19,7 +19,7 @@ public class ProductPairs {
        
         // Calculate the start and ending sale IDs given the input dates
         String rangeQuery = "SELECT MIN(saleID), MAX(saleID) FROM saleHistory WHERE saleDate BETWEEN '" + startDate + "' AND '" + endDate + "';";  
-        String[][] rangeID = posDatabase.generateQueryMatrix(rangeQuery, "min", "max");
+        String[][] rangeID = posDatabase.GenerateQueryMatrix(rangeQuery, "min", "max");
         if(rangeID[0][0] == null || rangeID[0][1] == null){
             throw new RuntimeException("Error: No sales occured between the dates entered");
         }
@@ -27,10 +27,10 @@ public class ProductPairs {
         int endID = Integer.parseInt(rangeID[0][1]);
 
         // the matrix productComparisonMatrix's indexs are mapped to productIDs through this matrix
-        String[][] indexToIdKey = posDatabase.getStringMatrix("product","productID");
+        String[][] indexToIdKey = posDatabase.GetStringMatrix("product","productID");
 
         // the matrix saleLineItems is a list of the saleLineItems table to be pulled from in the loop
-        String[][] saleLineItems = posDatabase.getStringMatrix("saleLineItem","saleID","productID");
+        String[][] saleLineItems = posDatabase.GetStringMatrix("saleLineItem","saleID","productID");
 
         // productComparisonMatrix keeps track of how many times each combination of products is sold together
         int numberOfProducts = DatabaseInterface.RowCount("product");
@@ -101,7 +101,7 @@ public class ProductPairs {
             if(maximumMatches > 1){
                 finalResult.add(new String[]{String.valueOf(product1Id), String.valueOf(product2Id), String.valueOf(maximumMatches)});
             } else {
-                
+
                 // If there are no more pairs that occur at least twice, the loop is terminated
                 continueSearch = false;
             }
@@ -109,10 +109,10 @@ public class ProductPairs {
 
         // Converts from an ArrayList<String[]> to String[][]
         String[][] bestPairs = new String[finalResult.size()][];
-        for(int i = 0; i < finalResult.size(); i++){
+        for (int i = 0; i < finalResult.size(); i++) {
             bestPairs[i] = finalResult.get(i);
         }
-        if(finalResult.size() == 0){
+        if (finalResult.size() == 0) {
             System.out.println("No pairs occured more than once in the given range");
         }
 

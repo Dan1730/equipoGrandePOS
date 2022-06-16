@@ -107,7 +107,7 @@ public class StartPage extends JFrame {
             Boolean isCashier = false;
             
             // connect to database, get userinfo table
-            String[][] userPasswordMatrix = posDatabase.getStringMatrix("userinformation", "username", "password", "role");
+            String[][] userPasswordMatrix = posDatabase.GetStringMatrix("userinformation", "username", "password", "role");
             // does username exist in database and does password match username?
             for(int row = 0; row < userPasswordMatrix.length; row++) {
                 if (userPasswordMatrix[row][0].equals(usernameStr) && userPasswordMatrix[row][2].equals("Cashier")) {
@@ -155,7 +155,7 @@ public class StartPage extends JFrame {
             Boolean loginWorked = false;
             
             // connect to database, get userinfo table
-            String[][] userPasswordMatrix = posDatabase.getStringMatrix("userinformation", "username", "password", "role");
+            String[][] userPasswordMatrix = posDatabase.GetStringMatrix("userinformation", "username", "password", "role");
             //    - does username exist in database and does password match username?
             for(int row = 0; row < userPasswordMatrix.length; row++) {
                 if (userPasswordMatrix[row][0].equals(usernameStr) && userPasswordMatrix[row][1].equals(passwordStr)) {

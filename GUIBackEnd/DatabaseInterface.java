@@ -199,7 +199,7 @@ public class DatabaseInterface {
      * @return Returns a 2D Array of Strings where each row is a row returned by the query and the
      *      columns are in the order they appeared in the attributes varargs.
      */
-    public String[][] getStringMatrix(String tableName, String ... attributes) {
+    public String[][] GetStringMatrix(String tableName, String ... attributes) {
         // construct the SQL query
         String sqlStatement = "SELECT " + attributes[0];
         for(int i = 1; i < attributes.length; i++){
@@ -207,10 +207,10 @@ public class DatabaseInterface {
         }
         sqlStatement += " FROM " + tableName + " ORDER BY " + attributes[0] + ";";
 
-        return generateQueryMatrix(sqlStatement, attributes);
+        return GenerateQueryMatrix(sqlStatement, attributes);
     }
 
-    String[][] generateQueryMatrix (String sqlQuery, String ... attributes) {
+    String[][] GenerateQueryMatrix (String sqlQuery, String ... attributes) {
             ArrayList<String[]> strArrList = new ArrayList<String[]>();
     
             // execute the query
@@ -246,7 +246,7 @@ public class DatabaseInterface {
      */
     public static void main(String[] args) {
         DatabaseInterface dbInterface = new DatabaseInterface();
-        String[][] matrix = dbInterface.getStringMatrix("product", "productname", "productid");
+        String[][] matrix = dbInterface.GetStringMatrix("product", "productname", "productid");
 
         for(String[] row : matrix) {
             for(String str : row) {
