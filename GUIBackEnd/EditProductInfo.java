@@ -4,7 +4,6 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.*;
 
 /**
@@ -126,7 +125,7 @@ public class EditProductInfo extends JFrame {
         JScrollPane sp = new JScrollPane(table);
 
         leftPanel.add(sp);
-        // Adding panel and seeting frame size
+        // Adding panel and setting frame size
         frame.add(pane);
         frame.setSize(800, 600);
         frame.setVisible(true);
