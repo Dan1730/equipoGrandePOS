@@ -150,7 +150,10 @@ public class Trends extends JFrame {
         restockReport.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // If restock is selected, perform an action
+                String[] columnNames = {"Product", "Quantity In-Stock", "Quanity Sold", "Revenue"};
+                String startDateString = startDate.getText();
+                String endDateString = endDate.getText();
+                model.setDataVector(trendsReport.generateRestockReport(startDateString, endDateString), columnNames);
             }
         });
 
@@ -160,7 +163,12 @@ public class Trends extends JFrame {
                 String[] columnNames = {"Product 1", "Product 2", "Pair Sales"};
                 String startDateString = startDate.getText();
                 String endDateString = endDate.getText();
-                model.setDataVector(productPairClass.GetBestPairs(startDateString, endDateString), columnNames);
+                String[][] pairs = productPairClass.GetBestPairs(startDateString, endDateString);
+                for(int i = 0; i < pairs.length; i++){
+                    pairs[i][0] = posDatabase.GetAttribute("product", "productName", pairs[i][0]);
+                    pairs[i][1] = posDatabase.GetAttribute("product", "productName", pairs[i][1]);
+                }
+                model.setDataVector(pairs, columnNames);
             }
         });
 
