@@ -55,18 +55,19 @@ public class EditInventory extends JFrame {
 
         // Adding text fields
         JTextField prodID = new JTextField();
-        prodID.setText("Product ID");
+        // prodID.setText("Product ID");
 
         JTextField amountInStock = new JTextField();
-        amountInStock.setText("amountInStock");
+        // amountInStock.setText("amountInStock");
 
         JTextField amountRestock = new JTextField();
-        amountRestock.setText("amountRestock");
+        // amountRestock.setText("amountRestock");
+
+        JLabel prodIDLabel = new JLabel("Product ID");
+        JLabel amountStockLabel = new JLabel("Amount in stock");
+        JLabel amountRestockLabel = new JLabel("Amount in restock");
 
         // Buttons
-
-         //   JButton removeButton = new JButton("Remove");
-         //   removeButton.setBounds(50, 150, 20, 20);
 
         JButton editButton = new JButton("Edit");
         editButton.setBounds(100, 150, 20, 20);
@@ -81,8 +82,12 @@ public class EditInventory extends JFrame {
          //   subPanel1.add(removeButton);
         subPanel1.add(editButton);
 
+        // INSERT THINGS HERE VVVVVV
+        subPanel2.add(prodIDLabel);
         subPanel2.add(prodID);
+        subPanel2.add(amountStockLabel);
         subPanel2.add(amountInStock);
+        subPanel2.add(amountRestockLabel);
         subPanel2.add(amountRestock);
 
         subPanel3.add(enterButton);

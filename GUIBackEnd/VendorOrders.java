@@ -27,7 +27,7 @@ public class VendorOrders extends JFrame {
         DefaultTableModel model = new DefaultTableModel();
 
         // Adding 3 text fields to search through orders
-        JTextField txIDTextField = new JTextField("Search by Transaction ID: ");
+        JTextField txIDTextField = new JTextField();
         txIDTextField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                txIDStr = txIDTextField.getText();
@@ -35,7 +35,7 @@ public class VendorOrders extends JFrame {
             }
          });
 
-         JTextField dateTextField = new JTextField("Search by Transaction Date: ");
+         JTextField dateTextField = new JTextField();
          dateTextField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                dateStr = dateTextField.getText();
@@ -43,7 +43,7 @@ public class VendorOrders extends JFrame {
             }
          });
 
-         JTextField pIDTextField = new JTextField("Search by Product ID: ");
+         JTextField pIDTextField = new JTextField();
          pIDTextField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                pIDStr = pIDTextField.getText();
@@ -51,8 +51,19 @@ public class VendorOrders extends JFrame {
             }
          });
 
+         JLabel txIDLabel = new JLabel("Search by Transaction ID: ");
+         JLabel dateLabel = new JLabel("Search by Transaction Date: ");
+         JLabel pIDLabel = new JLabel("Search by Product ID: ");
+
+
+
         // Adding buttons to the top panel
-        topPanel.setLayout(new GridLayout(2,3, 10, 10));
+        topPanel.setLayout(new GridLayout(3,3, 10, 10));
+
+        topPanel.add(txIDLabel);
+        topPanel.add(dateLabel);
+        topPanel.add(pIDLabel);
+
         topPanel.add(txIDTextField);
         topPanel.add(dateTextField);
         topPanel.add(pIDTextField);
