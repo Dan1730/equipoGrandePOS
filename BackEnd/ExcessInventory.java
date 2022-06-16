@@ -1,5 +1,9 @@
 import java.util.ArrayList;
 
+/**
+ * 
+ * @author Chris Weeks
+ */
 public class ExcessInventory {
     private DatabaseInterface dbInterface;
 
@@ -25,10 +29,21 @@ public class ExcessInventory {
         "LEFT JOIN(SELECT vli.productid, sum(vli.quantity) as salequantity FROM vendorlineitem vli WHERE vli.saleid > %s GROUP BY vli.productid) AS v ON c.productid = v.productid " + 
         "ORDER BY c.productid;";
     
+    /**
+     * Constructor for Excess Inventory
+     * @param dbInterface The DatabaseInterface object for the program
+     */
     public ExcessInventory(DatabaseInterface dbInterface) {
         this.dbInterface = dbInterface;
     }
 
+    /**
+     * Calculate the Percent of inventory sold for a given date range
+     * @param startDate the start date for the range
+     * @param endDate the end date for the range
+     * @return Returns a 2D string matrix consisting of the product IDs, names, and percentages of 
+     *      all items that sold less than 10% of invetory
+     */
     public String[][] CalculatePercentExcessInventory(String startDate, String endDate) {
         
         // Get Start Inventory
@@ -70,6 +85,10 @@ public class ExcessInventory {
         return ratioSM;
     }
 
+    /**
+     * Main loop for testing the ExcessInvetory class
+     * @param args args from command line
+     */
     public static void main(String[] args) {
         DatabaseInterface db = new DatabaseInterface();
         ExcessInventory excessInventory = new ExcessInventory(db);
