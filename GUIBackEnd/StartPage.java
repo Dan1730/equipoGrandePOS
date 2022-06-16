@@ -18,8 +18,7 @@ public class StartPage extends JFrame {
         employeeButton.setPreferredSize(new Dimension(200, 200));
         employeeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                new EmployeeView(posDatabase);
-                frame.dispose();
+                CheckCashierLogin(frame, posDatabase);
             }
         });
 
@@ -27,7 +26,7 @@ public class StartPage extends JFrame {
         managerButton.setPreferredSize(new Dimension(200, 200));
         managerButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                checkLogin(frame, posDatabase);
+                CheckManagerLogin(frame, posDatabase);
             }
         });
 
@@ -85,7 +84,7 @@ public class StartPage extends JFrame {
     }
 
     // function to check the login and password of the manager
-    public void checkLogin(JFrame frame, DatabaseInterface posDatabase) { // posDatabase as parameter?
+    public void CheckManagerLogin(JFrame frame, DatabaseInterface posDatabase) { // posDatabase as parameter?
         JPanel managerPanel = new JPanel();
         JTextField usernameField = new JTextField(20);
         JPasswordField passwordField = new JPasswordField(20);
@@ -105,13 +104,16 @@ public class StartPage extends JFrame {
             String usernameStr = new String(usernameField.getText());    
             String passwordStr = new String(passwordField.getPassword());
             Boolean loginWorked = false;
+            Boolean isCashier = false;
             
-            // TO DO 
-            //    - connect to database, get userinfo table
-            String[][] userPasswordMatrix = posDatabase.getStringMatrix("userinformation", "username", "password");
-            //    - does username exist in database and does password match username?
+            // connect to database, get userinfo table
+            String[][] userPasswordMatrix = posDatabase.getStringMatrix("userinformation", "username", "password", "role");
+            // does username exist in database and does password match username?
             for(int row = 0; row < userPasswordMatrix.length; row++) {
-                if (userPasswordMatrix[row][0].equals(usernameStr) && userPasswordMatrix[row][1].equals(passwordStr)) {
+                if (userPasswordMatrix[row][0].equals(usernameStr) && userPasswordMatrix[row][2].equals("Cashier")) {
+                    isCashier = true;
+                }
+                if (userPasswordMatrix[row][0].equals(usernameStr) && userPasswordMatrix[row][1].equals(passwordStr) && userPasswordMatrix[row][2].equals("Manager")) {
                     loginWorked = true;
                     new ManagerView(posDatabase);
                     frame.dispose();
@@ -120,7 +122,51 @@ public class StartPage extends JFrame {
             }
             // incorrect username/password, show incorrect popup and go back to start page
             if(!loginWorked) {
-                JOptionPane.showMessageDialog(frame, "Incorrect Password. Please Try Again", "Error", JOptionPane.ERROR_MESSAGE);
+                if(isCashier) {
+                    JOptionPane.showMessageDialog(frame, "Permission Denied", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                else {
+                    JOptionPane.showMessageDialog(frame, "Incorrect Login. Please Try Again", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+    }
+
+    // function to check the login and password of the cashier, managers can also log into the employee view
+    public void CheckCashierLogin(JFrame frame, DatabaseInterface posDatabase) { // posDatabase as parameter?
+        JPanel managerPanel = new JPanel();
+        JTextField usernameField = new JTextField(20);
+        JPasswordField passwordField = new JPasswordField(20);
+
+        usernameField.setPreferredSize(new Dimension(300, 20));
+
+        managerPanel.add(new JLabel("Username: "));
+        managerPanel.add(usernameField);
+        managerPanel.add(new JLabel("Password: "));
+        managerPanel.add(passwordField);
+        managerPanel.setPreferredSize(new Dimension(300, 50));
+
+        int passwordPopup = JOptionPane.showConfirmDialog(frame, managerPanel, "Enter Cashier Login", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        
+        // after the OK option in the popup is selection, check the username and password from the database
+        if (passwordPopup == JOptionPane.OK_OPTION) {
+            String usernameStr = new String(usernameField.getText());    
+            String passwordStr = new String(passwordField.getPassword());
+            Boolean loginWorked = false;
+            
+            // connect to database, get userinfo table
+            String[][] userPasswordMatrix = posDatabase.getStringMatrix("userinformation", "username", "password", "role");
+            //    - does username exist in database and does password match username?
+            for(int row = 0; row < userPasswordMatrix.length; row++) {
+                if (userPasswordMatrix[row][0].equals(usernameStr) && userPasswordMatrix[row][1].equals(passwordStr)) {
+                    loginWorked = true;
+                    new EmployeeView(posDatabase);
+                    frame.dispose();
+                }
+            }
+            // incorrect username/password, show incorrect popup and go back to start page
+            if(!loginWorked) {
+                JOptionPane.showMessageDialog(frame, "Incorrect Login. Please Try Again", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
