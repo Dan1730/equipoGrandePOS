@@ -5,16 +5,9 @@ import java.util.*;
  */
 public class ProductPairs {
     DatabaseInterface posDatabase;
-    int numOfResults;
 
     ProductPairs(DatabaseInterface posDatabase) {
         this.posDatabase = posDatabase;
-        numOfResults = 10;
-    }
-
-    ProductPairs(DatabaseInterface posDatabase, int num){
-        this.posDatabase = posDatabase;
-        numOfResults = num;
     }
 
     /** Finds the most commonly bought pairs of products over a certain time interval
@@ -33,7 +26,7 @@ public class ProductPairs {
         int startID = Integer.parseInt(rangeID[0][0]);
         int endID = Integer.parseInt(rangeID[0][1]);
 
-        // the matrix numberOfProducts's indexs are mapped to productIDs through this matrix
+        // the matrix productComparisonMatrix's indexs are mapped to productIDs through this matrix
         String[][] indexToIdKey = posDatabase.getStringMatrix("product","productID");
 
         // the matrix saleLineItems is a list of the saleLineItems table to be pulled from in the loop
@@ -76,11 +69,9 @@ public class ProductPairs {
             }
         }
 
-        // the final result, the top 5 pairs formatted as [Product1, Product2, # of occurances] for each row
-        // String[][] finalResult = new String[numOfResults][3];
+        // the final result, all of the pairs formatted as [Product1, Product2, # of occurances] for each array in the ArrayList
         ArrayList<String[]> finalResult = new ArrayList<String[]>();
 
-        // adding the top 5 pairs to finalResult
         // adding pairs that occur more than once to finalResult
         boolean continueSearch = true;
         while(continueSearch){
@@ -106,19 +97,14 @@ public class ProductPairs {
             int product1Id = Integer.parseInt(indexToIdKey[product1Index][0]);
             int product2Id = Integer.parseInt(indexToIdKey[product2Index][0]);
 
-            // stores the best pair into the correct row of finalResult
-            // finalResult[numberAdded][0] = String.valueOf(product1Id);
-            // finalResult[numberAdded][1] = String.valueOf(product2Id);
-            // finalResult[numberAdded][2] = String.valueOf(maximumMatches);
+            // stores the best pair into the next spot of finalResult
             if(maximumMatches > 1){
                 finalResult.add(new String[]{String.valueOf(product1Id), String.valueOf(product2Id), String.valueOf(maximumMatches)});
             } else {
+                
+                // If there are no more pairs that occur at least twice, the loop is terminated
                 continueSearch = false;
             }
-
-
-            // Increments and loops again until all of the top 5 pairs have been found
-            // numberAdded++;
         }
 
         // Converts from an ArrayList<String[]> to String[][]

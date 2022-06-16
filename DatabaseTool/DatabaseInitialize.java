@@ -151,8 +151,8 @@ class DatabaseInitialize {
             ReplaceTable("currentinventory",
                 "  CREATE TABLE currentinventory (" +
                 "  productID INTEGER PRIMARY KEY," +
-                "  stockQuantity FLOAT CHECK(stockQuantity > 0)," +
-                "  restockQuantity FLOAT CHECK(restockQuantity > 0)" +
+                "  stockQuantity FLOAT CHECK(stockQuantity >= 0)," +
+                "  restockQuantity FLOAT CHECK(restockQuantity >= 0)" +
                 ");"
             );
             
@@ -179,7 +179,7 @@ class DatabaseInitialize {
                 "  CREATE TABLE saleLineItem (" +
                 "  saleID INTEGER," +
                 "  productID INTEGER," +
-                "  quantity FLOAT CHECK(quantity > 0)" +
+                "  quantity FLOAT CHECK(quantity >= 0)" +
                 ");"
             );
 
@@ -195,7 +195,7 @@ class DatabaseInitialize {
                 "  CREATE TABLE vendorLineItem (" +
                 "  saleID INTEGER," +
                 "  productID INTEGER," +
-                "  quantity FLOAT CHECK(quantity > 0)" +
+                "  quantity FLOAT CHECK(quantity >= 0)" +
                 ");"
             );
             

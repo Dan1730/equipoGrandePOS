@@ -71,8 +71,8 @@ public class EditProductInfo extends JFrame {
         JTextField purchase = new JTextField();
 
         // Adding labels for text fields
-        JLabel prodIDLabel = new JLabel("Prouct ID:");
-        JLabel prodNameLabel = new JLabel("Prouct Name:");
+        JLabel prodIDLabel = new JLabel("Product ID:");
+        JLabel prodNameLabel = new JLabel("Product Name:");
         JLabel sellLabel = new JLabel("Sell Price:");
         JLabel purchaseLabel = new JLabel("Purchase Price:");
 

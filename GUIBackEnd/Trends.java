@@ -128,7 +128,7 @@ public class Trends extends JFrame {
         homeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new ManagerView();
+                new ManagerView(posDatabase);
                 frame.dispose();
             }
         });
@@ -140,7 +140,17 @@ public class Trends extends JFrame {
                 String[] columnNames = {"Product", "Quantity Sold", "Revenue", "Cost", "Net Profit"};
                 String startDateString = startDate.getText();
                 String endDateString = endDate.getText();
-                model.setDataVector(trendsReport.generateReport(startDateString, endDateString), columnNames);
+
+                String[][] salesReportMatrix = trendsReport.generateReport(startDateString, endDateString);
+
+                for(int i = 0; i < salesReportMatrix.length; i++){
+                    salesReportMatrix[i][1] = String.format("%.2f",Float.parseFloat(salesReportMatrix[i][1]));
+                    salesReportMatrix[i][2] = String.format("%.2f",Float.parseFloat(salesReportMatrix[i][2]));
+                    salesReportMatrix[i][3] = String.format("%.2f",Float.parseFloat(salesReportMatrix[i][3]));
+                    salesReportMatrix[i][4] = String.format("%.2f",Float.parseFloat(salesReportMatrix[i][4]));
+                }
+
+                model.setDataVector(salesReportMatrix, columnNames);
             }
         });
 
@@ -155,9 +165,19 @@ public class Trends extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String[] columnNames = {"Product", "Quantity In-Stock", "Quanity Sold", "Revenue"};
+                
                 String startDateString = startDate.getText();
                 String endDateString = endDate.getText();
-                model.setDataVector(trendsReport.generateRestockReport(startDateString, endDateString), columnNames);
+
+                String[][] restockReportMatrix = trendsReport.generateRestockReport(startDateString, endDateString);
+
+                for(int i = 0; i < restockReportMatrix.length; i++){
+                    restockReportMatrix[i][1] = String.format("%.2f",Float.parseFloat(restockReportMatrix[i][1]));
+                    restockReportMatrix[i][2] = String.format("%.2f",Float.parseFloat(restockReportMatrix[i][2]));
+                    restockReportMatrix[i][3] = String.format("%.2f",Float.parseFloat(restockReportMatrix[i][3]));
+                }
+
+                model.setDataVector(restockReportMatrix, columnNames);
             }
         });
 
