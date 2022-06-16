@@ -31,6 +31,23 @@ public class SalesReport {
         return posDatabase.generateQueryMatrix(salesReportQuery, "productName", "amountSold", "revenue", "cost", "profit");
     }
 
+    public String[][] generateRestockReport(String startDate, String endDate) {
+        String rangeQuery = "SELECT MIN(saleID), MAX(saleID) FROM saleHistory WHERE saleDate BETWEEN '" + startDate + "' AND '" + endDate + "';";  
+
+        String[][] rangeID = posDatabase.generateQueryMatrix(rangeQuery, "min", "max");
+        String startID = rangeID[0][0];
+        String endID = rangeID[0][1];
+
+        String restockReportQuery = "SELECT productName,  stockquantity, amountSold, revenue FROM ("
+            + "SELECT productName, stockquantity, sum(quantity) as amountSold, sum(quantity*sellprice) as revenue " 
+            + "FROM Product p, currentinventory c, salelineitem s "
+            + "WHERE s.productID = p.productID AND c.productID = p.productID AND s.saleID BETWEEN " + startID + " AND " + endID
+            + " GROUP BY p.productName, stockQuantity"
+            + ") AS SalesReport WHERE amountSold > stockQuantity;";
+
+        return posDatabase.generateQueryMatrix(restockReportQuery, "productName", "stockQuantity", "amountSold", "revenue");
+    }
+
     public static void main(String[] args) {
         SalesReport test = new SalesReport(new DatabaseInterface());
 
@@ -38,5 +55,10 @@ public class SalesReport {
         for (int i = 0; i < testReport.length; i++) {
             System.out.println(testReport[i][0] + " " + testReport[i][1] + " " + testReport[i][2] + " " + testReport[i][3] + " " + testReport[i][4]);
         }
+
+        testReport = test.generateRestockReport("2022-05-01", "2022-07-02");
+        for (int i = 0; i < testReport.length; i++) {
+            System.out.println(testReport[i][0] + " " + testReport[i][1] + " " + testReport[i][2] + " " + testReport[i][3]);
     }
+}
 }
