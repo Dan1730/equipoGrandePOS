@@ -39,4 +39,8 @@ SELECT productname FROM product WHERE EXISTS (SELECT productid FROM vendorlineit
 
 --Sale History SQL Demo
 SELECT productName, sum(quantity) as amountSold, sum(quantity*sellprice) as revenue  FROM Product p, salelineitem s WHERE s.productID = p.productID AND s.saleID BETWEEN 95 AND 186 GROUP BY p.productName;
+
+SELECT productName, stockquantity, sum(quantity) as amountSold, sum(quantity*sellprice) as revenue  FROM Product p, currentinventory c, salelineitem s WHERE s.productID = p.productID AND c.productID = p.productID  AND s.saleID BETWEEN 95 AND 186 GROUP BY p.productName;
+
 SELECT MIN(saleID), MAX(saleID) FROM saleHistory WHERE saleDate BETWEEN '2022-06-03' AND '2022-06-07';  
+
