@@ -88,8 +88,7 @@ public class EditInventory extends JFrame {
         rightPanel.add(subPanel2);
         rightPanel.add(subPanel3);
 
-        //// LEFT PANEL ///
-        // Table components
+        // Left Panel Table components
 
         // Column Names
         String[] columnNames = { "Product ID", "Product Name", "Amount in Stock", "Amount to Restock"};
@@ -100,7 +99,6 @@ public class EditInventory extends JFrame {
         JTable table = new JTable(model);
         table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         table.setBounds(30, 40, 200, 300);
-        // table.setEnabled(false);
 
         // Populate text boxes when a row is selected
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -129,7 +127,6 @@ public class EditInventory extends JFrame {
         enterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // prodID, amountInStock, amountRestock
                 currentInventoryObject.UpdateProductInventory(prodID.getText(), amountInStock.getText(), amountRestock.getText());
                 UpdateRow(prodID.getText(), model, amountInStock.getText(), amountRestock.getText());
             }
