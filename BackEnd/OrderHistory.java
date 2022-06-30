@@ -11,7 +11,7 @@ public class OrderHistory{
     /**
      * Returns the String matrix of all vendor orders for input into GUI table
      */
-    public String[][] fetchTableData(String txId, String date, String productID){
+    public String[][] FetchTableData(String txId, String date, String productID){
         String sqlConditions = "";
 
         if (date != null) {
@@ -31,7 +31,7 @@ public class OrderHistory{
         + " h.saleID = l.saleID" + sqlConditions + " AND p.productID = l.productID GROUP BY saleDate, l.SaleID, l.productID, Quantity;";
 
         System.out.println(sqlQuery);
-        return posDatabase.generateQueryMatrix(sqlQuery, "saledate", "saleID", "productID", "Quantity", "SalePrice");
+        return posDatabase.GenerateQueryMatrix(sqlQuery, "saledate", "saleID", "productID", "Quantity", "SalePrice");
     }
 
     /**
@@ -50,7 +50,7 @@ public class OrderHistory{
         DatabaseInterface posDatabase = new DatabaseInterface();
         OrderHistory orderHistory = new OrderHistory(posDatabase);
 
-        String[][] table = orderHistory.fetchTableData("0", "2022-05-29", "2");
+        String[][] table = orderHistory.FetchTableData("0", "2022-05-29", "2");
 
         for(int i = 0; i < table.length; i++){
             System.out.print("Row " + i + ": ");

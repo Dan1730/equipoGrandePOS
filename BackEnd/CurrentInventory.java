@@ -18,7 +18,7 @@ public class CurrentInventory {
      *      columns are in the order they appeared in the currentInventory table
      */
     public String[][] ToStringMatrix(){
-        return posDatabase.getStringMatrix("currentInventory", "productID", "stockquantity", "restockquantity");
+        return posDatabase.GetStringMatrix("currentInventory", "productID", "stockquantity", "restockquantity");
     }
 
     /**

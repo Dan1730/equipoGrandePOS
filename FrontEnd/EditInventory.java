@@ -79,7 +79,6 @@ public class EditInventory extends JFrame {
         homeButton.setBounds(150, 150, 20, 20);
 
         subPanel1.add(Box.createRigidArea(new Dimension(50, 50)));
-         //   subPanel1.add(removeButton);
         subPanel1.add(editButton);
 
         // INSERT THINGS HERE VVVVVV
@@ -130,6 +129,7 @@ public class EditInventory extends JFrame {
         JScrollPane sp = new JScrollPane(table);
 
         leftPanel.add(sp);
+        
         // Adding panel and seeting frame size
         frame.add(pane);
         frame.setSize(800, 600);

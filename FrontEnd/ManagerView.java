@@ -77,12 +77,15 @@ public class ManagerView extends JFrame {
         JPanel bottomPanel = new JPanel();
         JButton logOutButton = new JButton("Log Out");
         logOutButton.setMaximumSize(new Dimension(100, 80));
+
+        //If the logout button is clicked, the browser is exited
         logOutButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 frame.dispose();
             }
         });
 
+        //If the home button is pressed, you are taken back to the start page
         JButton homeButton = new JButton("Start Page");
         homeButton.setMaximumSize(new Dimension(100, 50));
         homeButton.addActionListener(new ActionListener() {

@@ -5,6 +5,9 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.*;
 
+/**
+ * @author Juliana Leano
+ */
 public class VendorOrders extends JFrame {
     // Initializing frame
     private final JFrame frame;
@@ -27,43 +30,32 @@ public class VendorOrders extends JFrame {
         DefaultTableModel model = new DefaultTableModel();
 
         // Adding 3 text fields to search through orders
-        JTextField txIDTextField = new JTextField();
+        JTextField txIDTextField = new JTextField("Search by Transaction ID: ");
         txIDTextField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-               txIDStr = txIDTextField.getText();
-               updateTable(orderHistoryTool, model, columnNames);
+				txIDStr = txIDTextField.getText();
+				updateTable(orderHistoryTool, model, columnNames);
             }
-         });
+		});
 
-         JTextField dateTextField = new JTextField();
+         JTextField dateTextField = new JTextField("Search by Transaction Date: ");
          dateTextField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-               dateStr = dateTextField.getText();
-               updateTable(orderHistoryTool, model, columnNames);
+               	dateStr = dateTextField.getText();
+               	updateTable(orderHistoryTool, model, columnNames);
             }
-         });
+		});
 
-         JTextField pIDTextField = new JTextField();
+         JTextField pIDTextField = new JTextField("Search by Product ID: ");
          pIDTextField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-               pIDStr = pIDTextField.getText();
-               updateTable(orderHistoryTool, model, columnNames);
+            	pIDStr = pIDTextField.getText();
+               	updateTable(orderHistoryTool, model, columnNames);
             }
-         });
-
-         JLabel txIDLabel = new JLabel("Search by Transaction ID: ");
-         JLabel dateLabel = new JLabel("Search by Transaction Date: ");
-         JLabel pIDLabel = new JLabel("Search by Product ID: ");
-
-
+		});
 
         // Adding buttons to the top panel
-        topPanel.setLayout(new GridLayout(3,3, 10, 10));
-
-        topPanel.add(txIDLabel);
-        topPanel.add(dateLabel);
-        topPanel.add(pIDLabel);
-
+        topPanel.setLayout(new GridLayout(2,3, 10, 10));
         topPanel.add(txIDTextField);
         topPanel.add(dateTextField);
         topPanel.add(pIDTextField);
@@ -73,16 +65,16 @@ public class VendorOrders extends JFrame {
         topPanel.add(Box.createRigidArea(new Dimension(50, 20)));
 
          // setting up the display table with column names for the mid panel
-         JTable displayTable = new JTable();
-         String[][] data = orderHistoryTool.fetchTableData(txIDStr, dateStr, pIDStr);
-         matrixSort(data);
-         model.setColumnIdentifiers(columnNames);
-         displayTable.setEnabled(false);
-         displayTable.setModel(model);
-         updateTable(orderHistoryTool, model, columnNames);
-         JScrollPane displayScrollPane = new JScrollPane(displayTable);
+		JTable displayTable = new JTable();
+		String[][] data = orderHistoryTool.FetchTableData(txIDStr, dateStr, pIDStr);
+		matrixSort(data);
+		model.setColumnIdentifiers(columnNames);
+		displayTable.setEnabled(false);
+		displayTable.setModel(model);
+		updateTable(orderHistoryTool, model, columnNames);
+		JScrollPane displayScrollPane = new JScrollPane(displayTable);
 
-         midPanel.add(displayScrollPane);
+		midPanel.add(displayScrollPane);
 
          // adding the home button to the bottom panel
         JPanel bottomPanel = new JPanel();
@@ -90,8 +82,8 @@ public class VendorOrders extends JFrame {
         homeButton.setMaximumSize(new Dimension(100, 80));
         homeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-               new ManagerView(posDatabase); 
-               frame.dispose();
+            	new ManagerView(posDatabase); 
+               	frame.dispose();
             }
         });
 
@@ -117,35 +109,35 @@ public class VendorOrders extends JFrame {
     }
 
     public void updateTable(OrderHistory orderHistoryTool, DefaultTableModel model, String[] columnNames){
-      if(txIDStr != null && txIDStr.equals("")){
-         txIDStr = null;
-      }if(dateStr != null && dateStr.equals("")){
-         dateStr = null;
-      }if(pIDStr != null && pIDStr.equals("")){
-         pIDStr = null;
-      }
-      String[][] data = orderHistoryTool.fetchTableData(txIDStr, dateStr, pIDStr);
-      for(int i = 0; i < data.length; i++){
-         data[i][4] = String.format("%.2f",Float.parseFloat(data[i][4]));
-      }
-      matrixSort(data);
-      model.setDataVector(data, columnNames);
+		if(txIDStr != null && txIDStr.equals("")){
+			txIDStr = null;
+		} if(dateStr != null && dateStr.equals("")){
+			dateStr = null;
+		} if(pIDStr != null && pIDStr.equals("")){
+			pIDStr = null;
+		}
+		String[][] data = orderHistoryTool.FetchTableData(txIDStr, dateStr, pIDStr);
+		for(int i = 0; i < data.length; i++){
+			data[i][4] = String.format("%.2f",Float.parseFloat(data[i][4]));
+		}
+		matrixSort(data);
+		model.setDataVector(data, columnNames);
     }
 
     public void matrixSort(String[][] data){
-      for(int i = 0; i < data.length-1; i++){
-         for(int j = i+1; j < data.length; j++){
-            if((data[i][0].compareTo(data[j][0]) > 0) || (data[i][0].compareTo(data[j][0]) == 0) && Integer.parseInt(data[j][2]) < Integer.parseInt(data[i][2])){
-               String[] hold = data[i];
-               data[i] = data[j];
-               data[j] = hold;
-            }
-         }
-      }
-    }
+      	for(int i = 0; i < data.length-1; i++){
+        	 for(int j = i+1; j < data.length; j++){
+            	if((data[i][0].compareTo(data[j][0]) > 0) || (data[i][0].compareTo(data[j][0]) == 0) && Integer.parseInt(data[j][2]) < Integer.parseInt(data[i][2])){
+					String[] hold = data[i];
+					data[i] = data[j];
+					data[j] = hold;
+				}
+			}
+		}
+	}
 
     public static void main(String[] args) {
-      DatabaseInterface db = new DatabaseInterface();  
-      VendorOrders window = new VendorOrders(db);
+		DatabaseInterface db = new DatabaseInterface();  
+		VendorOrders window = new VendorOrders(db);
     }
 }

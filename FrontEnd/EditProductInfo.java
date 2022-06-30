@@ -111,7 +111,7 @@ public class EditProductInfo extends JFrame {
 
         //// LEFT PANEL ///
         // Table components
-        String[][] data = currentProducts.getProductMatrix();
+        String[][] data = currentProducts.GetProductMatrix();
         for (String[] row : data) {
             row[4] = Unit.StringIntToString(row[4]);
         }
@@ -156,7 +156,7 @@ public class EditProductInfo extends JFrame {
 
                 currentProducts.AddOrEditProduct(prodID.getText(), prodName.getText(), sell.getText(),
                         purchase.getText(), comboBox.getItemAt(comboBox.getSelectedIndex()));
-                String[][] updatedData = currentProducts.getProductMatrix();
+                String[][] updatedData = currentProducts.GetProductMatrix();
                 for (String[] row : updatedData) {
                     row[4] = Unit.StringIntToString(row[4]);
                 }
@@ -173,7 +173,7 @@ public class EditProductInfo extends JFrame {
                     String PIDToRemove = (String) table.getValueAt(table.getSelectedRow(), 0);
 
                     currentProducts.RemoveProductFromProducts(PIDToRemove);
-                    String[][] updatedData = currentProducts.getProductMatrix();
+                    String[][] updatedData = currentProducts.GetProductMatrix();
                     model.setDataVector(updatedData, columnNames);
                 }
             }
